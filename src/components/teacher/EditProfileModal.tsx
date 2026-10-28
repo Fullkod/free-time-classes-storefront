@@ -28,6 +28,7 @@ import { COUNTRIES } from "@/lib/constants/countries";
 import { updateTutorProfile } from "@/lib/supabase/queries/tutors";
 import { updateUser } from "@/lib/supabase/queries/users";
 import type { TutorProfile } from "@/types/tutor";
+import type { User } from "@/types/user";
 import { getPublicUrl, removeUnusedUpload, uploadAvatar } from "@/lib/supabase/storage";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -100,11 +101,12 @@ export default function EditProfileModal({
 
     setLoading(true);
 
-    // Filter out empty values and prepare update object
-    const formDataToUpdate: Partial<FormData> = {};
+    // Username is required; phone and country can be cleared (G-prof-6).
+    const formDataToUpdate: Partial<Pick<User, "username" | "phone" | "country">> = {
+      phone: formData.phone.trim() || null,
+      country: formData.country || null,
+    };
     if (formData.username) formDataToUpdate.username = formData.username;
-    if (formData.phone) formDataToUpdate.phone = formData.phone;
-    if (formData.country) formDataToUpdate.country = formData.country;
 
     let uploadedPicture: string | null = null;
     try {
