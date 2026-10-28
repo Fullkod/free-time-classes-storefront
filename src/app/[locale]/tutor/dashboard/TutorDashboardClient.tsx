@@ -587,7 +587,7 @@ export default function TutorDashboardClient({
           {statCards.map((stat) => (
             <div
               key={stat.label}
-              className={`flex h-36 w-40 shrink-0 flex-col justify-between rounded-2xl p-5 ${stat.color}`}
+              className={`flex h-36 w-40 shrink-0 flex-col justify-between rounded-ft-xl p-5 ${stat.color}`}
             >
               <stat.icon className="h-6 w-6" />
               <div>
@@ -636,7 +636,7 @@ export default function TutorDashboardClient({
                 return (
                   <div
                     key={booking.id}
-                    className={`flex items-center justify-between gap-3 rounded-2xl p-4 shadow-sm ${
+                    className={`flex items-center justify-between gap-3 rounded-ft-lg p-4 shadow-sm ${
                       display.isCustomRequest ? "bg-amber-50" : "bg-white"
                     }`}
                   >
@@ -718,12 +718,12 @@ export default function TutorDashboardClient({
                       }`}
                     />
                     <div
-                      className={`rounded-2xl p-5 ${
+                      className={`rounded-ft-xl p-5 ${
                         isCurrent ? "bg-ft-surface-1" : "bg-white/80 opacity-80"
                       }`}
                     >
                       <span
-                        className={`inline-block rounded-md px-2.5 py-1 text-xs font-bold ${
+                        className={`inline-block rounded-ft-xs px-2.5 py-1 text-xs font-bold ${
                           isCurrent
                             ? "bg-ft-surface-2 text-ft-ink"
                             : "bg-slate-100 text-slate-500"
@@ -752,7 +752,7 @@ export default function TutorDashboardClient({
                       </div>
                       {lesson.meet_link ? (
                         <Button
-                          className="mt-4 w-full rounded-xl border border-ft-line bg-white text-ft-ink-2 hover:bg-ft-surface-1"
+                          className="mt-4 w-full rounded-ft-md border border-ft-line bg-white text-ft-ink-2 hover:bg-ft-surface-1"
                           onClick={() => window.open(lesson.meet_link!, "_blank")}
                         >
                           <Video className="mr-2 h-4 w-4" />
@@ -761,7 +761,7 @@ export default function TutorDashboardClient({
                       ) : (
                         <Button
                           variant="outline"
-                          className="mt-4 w-full rounded-xl border-ft-line text-ft-ink-2"
+                          className="mt-4 w-full rounded-ft-md border-ft-line text-ft-ink-2"
                           onClick={() => {
                             setEditingMeetLinkId(lesson.id);
                             setEditingMeetLinkValue("");
@@ -813,7 +813,7 @@ export default function TutorDashboardClient({
       {/* ═══════════════ TABLET / DESKTOP VIEW (md+) ═══════════════ */}
       <div className="hidden space-y-6 md:block">
         {/* Hero card */}
-        <div className="rounded-3xl border border-ft-line-soft bg-gradient-to-br from-ft-surface-2 to-ft-surface-1 p-7 shadow-sm">
+        <div className="rounded-ft-2xl border border-ft-line-soft bg-gradient-to-br from-ft-surface-2 to-ft-surface-1 p-7 shadow-sm">
           <div>
             <p className="text-sm font-medium text-ft-ink-2">{todayLabel}</p>
             <h1 className="mt-1 text-4xl font-extrabold tracking-tight text-slate-900 lg:text-5xl">
@@ -833,7 +833,7 @@ export default function TutorDashboardClient({
               className={`border ${stat.accent} bg-white/90 backdrop-blur transition-shadow hover:shadow-md`}
             >
               <CardContent className="flex items-center gap-3 p-4">
-                <div className={`rounded-xl p-2.5 ${stat.color}`}>
+                <div className={`rounded-ft-sm p-2.5 ${stat.color}`}>
                   <stat.icon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
@@ -905,7 +905,7 @@ export default function TutorDashboardClient({
                         return (
                           <div
                             key={booking.id}
-                            className={`space-y-3 rounded-xl border p-4 ${
+                            className={`space-y-3 rounded-ft-base border p-4 ${
                               display.isCustomRequest
                                 ? "border-amber-200 bg-amber-50/50"
                                 : "border-ft-line-soft bg-ft-paper-deep"
@@ -941,17 +941,17 @@ export default function TutorDashboardClient({
                             </div>
 
                             <div className="grid grid-cols-3 gap-2 text-sm text-slate-700">
-                              <div className="rounded-lg bg-white/80 p-2">
+                              <div className="rounded-ft-sm bg-white/80 p-2">
                                 <p className="text-xs text-slate-500">{t("scheduledAt")}</p>
                                 <p className="font-medium">{scheduledLabel}</p>
                               </div>
-                              <div className="rounded-lg bg-white/80 p-2">
+                              <div className="rounded-ft-sm bg-white/80 p-2">
                                 <p className="text-xs text-slate-500">{t("duration")}</p>
                                 <p className="font-medium">
                                   {display.durationMinutes ?? "—"} {t("minutes")}
                                 </p>
                               </div>
-                              <div className="rounded-lg bg-white/80 p-2">
+                              <div className="rounded-ft-sm bg-white/80 p-2">
                                 <p className="text-xs text-slate-500">{t("price")}</p>
                                 <p className="font-medium">
                                   {display.isCustomRequest
@@ -962,7 +962,7 @@ export default function TutorDashboardClient({
                             </div>
 
                             {display.notes ? (
-                              <div className="rounded-md bg-white/70 p-2 text-xs text-slate-600">
+                              <div className="rounded-ft-xs bg-white/70 p-2 text-xs text-slate-600">
                                 <span className="font-semibold text-slate-700">
                                   {t("studentNotes")}:
                                 </span>{" "}
@@ -1047,7 +1047,7 @@ export default function TutorDashboardClient({
                       return (
                         <div
                           key={lesson.id}
-                          className={`relative rounded-xl border p-4 ${
+                          className={`relative rounded-ft-base border p-4 ${
                             isCurrent
                               ? "border-ft-line bg-ft-surface-1 shadow-sm"
                               : "border-slate-200 bg-white"
@@ -1160,7 +1160,7 @@ export default function TutorDashboardClient({
                 <div className="grid grid-cols-2 gap-3">
                   {quickActions.map((action) => (
                     <Link key={action.href + action.label} href={action.href}>
-                      <div className="flex h-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-ft-line-soft bg-ft-paper-deep p-4 text-center transition-all hover:bg-ft-ink hover:text-white">
+                      <div className="flex h-full cursor-pointer flex-col items-center justify-center gap-2 rounded-ft-base border border-ft-line-soft bg-ft-paper-deep p-4 text-center transition-all hover:bg-ft-ink hover:text-white">
                         <action.icon className="h-5 w-5" />
                         <span className="text-xs font-semibold leading-tight">{action.label}</span>
                       </div>
@@ -1213,7 +1213,7 @@ export default function TutorDashboardClient({
                   disabled={actionLoadingBookingId === rejectTarget.booking.id}
                   aria-label={t("rejectReason")}
                   nestedScrollParentRef={rejectDialogBodyScrollRef}
-                  triggerClassName="h-10 rounded-md border border-gray-300 bg-white shadow-sm hover:bg-gray-50/90"
+                  triggerClassName="h-10 rounded-ft border border-gray-300 bg-white shadow-sm hover:bg-gray-50/90"
                 />
               </div>
 

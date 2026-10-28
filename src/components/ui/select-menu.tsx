@@ -166,7 +166,7 @@ export function SelectMenu({
             aria-label={ariaLabel}
             disabled={disabled}
             className={cn(
-              "h-10 min-w-0 justify-between gap-2 rounded-lg border border-input bg-background px-3 text-left text-sm font-normal shadow-sm hover:bg-accent/40",
+              "h-10 min-w-0 justify-between gap-2 rounded-ft border border-input bg-background px-3 text-left text-sm font-normal shadow-sm hover:bg-accent/40",
               fullWidth ? "w-full" : "w-max min-w-[11rem]",
               triggerClassName
             )}
@@ -188,7 +188,7 @@ export function SelectMenu({
               : undefined
           }
           className={cn(
-            "z-50 min-w-[var(--radix-dropdown-menu-trigger-width)] overflow-hidden rounded-lg border bg-popover p-0 text-popover-foreground shadow-lg",
+            "z-50 min-w-[var(--radix-dropdown-menu-trigger-width)] overflow-hidden rounded-ft border bg-popover p-0 text-popover-foreground shadow-lg",
             contentClassName
           )}
         >

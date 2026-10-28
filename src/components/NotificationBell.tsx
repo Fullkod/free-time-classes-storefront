@@ -102,7 +102,7 @@ export default function NotificationBell() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="w-80 max-h-[420px] overflow-y-auto rounded-xl p-0 shadow-lg"
+        className="w-80 max-h-[420px] overflow-y-auto rounded-ft-base p-0 shadow-lg"
         align="end"
         forceMount
       >

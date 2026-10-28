@@ -371,7 +371,7 @@ export default function TutorCVSection({
         <section>
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100">
+              <div className="flex h-8 w-8 items-center justify-center rounded-ft-sm bg-amber-100">
                 <Award className="h-4 w-4 text-amber-700" />
               </div>
               <h3 className="font-semibold text-slate-800">
@@ -505,7 +505,7 @@ export default function TutorCVSection({
         <section>
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100">
+              <div className="flex h-8 w-8 items-center justify-center rounded-ft-sm bg-emerald-100">
                 <Briefcase className="h-4 w-4 text-emerald-700" />
               </div>
               <h3 className="font-semibold text-slate-800">

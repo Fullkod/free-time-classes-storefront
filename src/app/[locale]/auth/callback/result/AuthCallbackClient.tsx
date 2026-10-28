@@ -100,7 +100,7 @@ export default function AuthCallbackClient({ locale }: { locale: string }) {
             <button
               type="button"
               onClick={() => router.push(`/${locale}/login`)}
-              className="w-full rounded-2xl bg-ft-ink px-4 py-4 text-sm font-semibold text-ft-paper transition-colors hover:bg-[#2a241b]"
+              className="w-full rounded-ft-md bg-ft-ink px-4 py-4 text-sm font-semibold text-ft-paper transition-colors hover:bg-[#2a241b]"
             >
               {t("goToLogin")}
             </button>
