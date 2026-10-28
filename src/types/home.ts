@@ -9,6 +9,13 @@ export type HomeCourseCard = Pick<
   enrolled_students_count?: number;
 };
 
+/** A subject with its number of active courses (home categories strip). */
+export type HomeCategory = {
+  id: number;
+  name: string;
+  coursesCount: number;
+};
+
 export type HomeFeaturedTeacher = {
   id: string;
   name: string;

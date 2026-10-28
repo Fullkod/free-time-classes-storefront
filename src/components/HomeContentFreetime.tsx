@@ -4,7 +4,7 @@ import {
   getCourseCoverPublicUrl,
   getPublicUrl,
 } from "@/lib/supabase/storage";
-import type { HomeCourseCard, HomeFeaturedTeacher } from "@/types/home";
+import type { HomeCategory, HomeCourseCard, HomeFeaturedTeacher } from "@/types/home";
 import { ArrowRight, AudioLines, Sparkles, Star } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
@@ -21,23 +21,19 @@ function resolveAvatar(pic: string): string {
   return getPublicUrl("avatars", trimmed);
 }
 
-const CATEGORIES: ReadonlyArray<{ id: string; count: string; hue: string }> = [
-  { id: "languages", count: "412", hue: "#C9A86A" },
-  { id: "music", count: "184", hue: "#B89B5E" },
-  { id: "cooking", count: "96", hue: "#D4B57A" },
-  { id: "tech", count: "273", hue: "#A8895A" },
-  { id: "art", count: "158", hue: "#C8AB6E" },
-  { id: "wellbeing", count: "122", hue: "#D9BD83" },
-];
+const CATEGORY_HUES = ["#C9A86A", "#B89B5E", "#D4B57A", "#A8895A", "#C8AB6E", "#D9BD83"];
 
 interface HomeContentProps {
   initialCourses: HomeCourseCard[];
   initialFeaturedTeachers: HomeFeaturedTeacher[];
+  /** Subjects with active courses and their real counts. */
+  categories: HomeCategory[];
 }
 
 export default function HomeContentFreetime({
   initialCourses,
   initialFeaturedTeachers,
+  categories,
 }: HomeContentProps) {
   const t = useTranslations("home");
   const locale = useLocale();
@@ -194,33 +190,33 @@ export default function HomeContentFreetime({
         </div>
       </section>
 
-      {/* ───────── Categories strip ───────── */}
-      <section className="border-y border-ft-line-soft bg-ft-surface-1 px-6 py-10 md:px-9">
-        <div className="mx-auto max-w-screen-2xl">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-            {CATEGORIES.map((c) => (
-              <Link
-                key={c.id}
-                href={`/${locale}/courses`}
-                className="rounded-ft-md border border-ft-line-soft bg-ft-paper p-4 transition-colors hover:bg-ft-paper-deep"
-              >
-                <div
-                  className="mb-2.5 grid h-7 w-7 place-items-center rounded-ft-xs text-[13px] font-semibold text-[#1a1410]"
-                  style={{ background: c.hue }}
+      {/* ───────── Categories strip (real subjects and counts) ───────── */}
+      {categories.length > 0 && (
+        <section className="border-y border-ft-line-soft bg-ft-surface-1 px-6 py-10 md:px-9">
+          <div className="mx-auto max-w-screen-2xl">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+              {categories.map((c, i) => (
+                <Link
+                  key={c.id}
+                  href={`/${locale}/courses?subject=${c.id}`}
+                  className="rounded-ft-md border border-ft-line-soft bg-ft-paper p-4 transition-colors hover:bg-ft-paper-deep"
                 >
-                  {t(`categories.${c.id}`)[0]}
-                </div>
-                <div className="text-[13px] font-semibold tracking-tight text-ft-ink">
-                  {t(`categories.${c.id}`)}
-                </div>
-                <div className="mt-0.5 text-[11px] text-ft-ink-3">
-                  {c.count} {t("coursesText")}
-                </div>
-              </Link>
-            ))}
+                  <div
+                    className="mb-2.5 grid h-7 w-7 place-items-center rounded-ft-xs text-[13px] font-semibold text-[#1a1410]"
+                    style={{ background: CATEGORY_HUES[i % CATEGORY_HUES.length] }}
+                  >
+                    {c.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="text-[13px] font-semibold tracking-tight text-ft-ink">{c.name}</div>
+                  <div className="mt-0.5 text-[11px] text-ft-ink-3">
+                    {t("courseCount", { count: c.coursesCount })}
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ───────── Featured tutors ───────── */}
       {featuredTeachers.length > 0 && (

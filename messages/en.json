@@ -531,16 +531,9 @@
     "footerPrivacy": "Privacy",
     "footerTerms": "Terms",
     "footerTagline": "Learning in life's spare moments.",
-    "categories": {
-      "languages": "Languages",
-      "music": "Music",
-      "cooking": "Cooking",
-      "tech": "Technology",
-      "art": "Art & Design",
-      "wellbeing": "Wellbeing"
-    },
     "liveBadge": "Live",
-    "liveSample": "English · 5 min"
+    "liveSample": "English · 5 min",
+    "courseCount": "{count, plural, one {# course} other {# courses}}"
   },
   "aboutUs": {
     "metaTitle": "About us — Free Time Classes",

@@ -3,7 +3,7 @@ import { resolveCourseTutorUser } from "@/lib/supabase/course-tutor";
 import { fetchHomeFeaturedTeachers } from "@/lib/supabase/server-queries/home-featured-teachers";
 import { buildPageMetadata } from "@/lib/seo/page-metadata";
 import { createCatalogServerClient } from "@/lib/supabase/server-public";
-import type { HomeCourseCard, HomeFeaturedTeacher } from "@/types/home";
+import type { HomeCategory, HomeCourseCard, HomeFeaturedTeacher } from "@/types/home";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
@@ -35,12 +35,13 @@ function HomeFallback() {
 }
 
 async function HomePageContent() {
-  const { courses, featuredTeachers } = await getHomePageDataCached();
+  const { courses, featuredTeachers, categories } = await getHomePageDataCached();
 
   return (
     <HomeContent
       initialCourses={courses}
       initialFeaturedTeachers={featuredTeachers}
+      categories={categories}
     />
   );
 }
@@ -49,6 +50,7 @@ const getHomePageDataCached = unstable_cache(
   async (): Promise<{
     courses: HomeCourseCard[];
     featuredTeachers: HomeFeaturedTeacher[];
+    categories: HomeCategory[];
   }> => {
     const catalog = createCatalogServerClient();
     const { data } = await catalog
@@ -61,6 +63,7 @@ const getHomePageDataCached = unstable_cache(
       level,
       max_students,
       cover_image,
+      subject:subjects ( id, name ),
       tutor_profile:tutor_profiles!courses_tutor_id_fkey (
         id,
         user:users!tutor_profiles_id_fkey (
@@ -80,6 +83,7 @@ const getHomePageDataCached = unstable_cache(
       level: HomeCourseCard["level"];
       max_students: number;
       cover_image?: string | null;
+      subject?: { id: number; name: string } | { id: number; name: string }[] | null;
       tutor_profile?: {
         user?: { id: string; username: string } | null;
       } | null;
@@ -95,9 +99,22 @@ const getHomePageDataCached = unstable_cache(
 
     const featuredTeachers = await fetchHomeFeaturedTeachers(catalog, courses);
 
-    return { courses, featuredTeachers };
+    // Real categories: subjects with active courses, most courses first.
+    const bySubject = new Map<number, HomeCategory>();
+    for (const row of (data ?? []) as Array<{ subject?: { id: number; name: string } | { id: number; name: string }[] | null }>) {
+      const subject = Array.isArray(row.subject) ? row.subject[0] : row.subject;
+      if (!subject) continue;
+      const current = bySubject.get(subject.id) ?? { id: subject.id, name: subject.name, coursesCount: 0 };
+      current.coursesCount += 1;
+      bySubject.set(subject.id, current);
+    }
+    const categories = [...bySubject.values()]
+      .sort((a, b) => b.coursesCount - a.coursesCount || a.name.localeCompare(b.name))
+      .slice(0, 6);
+
+    return { courses, featuredTeachers, categories };
   },
-  ["public-home-page-v3"],
+  ["public-home-page-v4"],
   { revalidate: 3600, tags: ["courses", "home"] }
 );
 

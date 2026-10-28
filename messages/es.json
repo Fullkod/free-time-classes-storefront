@@ -531,16 +531,9 @@
     "footerPrivacy": "Privacidad",
     "footerTerms": "Términos",
     "footerTagline": "Aprender en los huecos de la vida.",
-    "categories": {
-      "languages": "Idiomas",
-      "music": "Música",
-      "cooking": "Cocina",
-      "tech": "Tecnología",
-      "art": "Arte & Diseño",
-      "wellbeing": "Bienestar"
-    },
     "liveBadge": "En vivo",
-    "liveSample": "Inglés · 5 min"
+    "liveSample": "Inglés · 5 min",
+    "courseCount": "{count, plural, one {# curso} other {# cursos}}"
   },
   "aboutUs": {
     "metaTitle": "Sobre nosotros — Free Time Classes",

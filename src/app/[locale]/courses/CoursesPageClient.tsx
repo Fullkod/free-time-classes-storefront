@@ -67,6 +67,15 @@ export default function CoursesPageClient({
     highRatingOnly: false,
   });
 
+  // ?subject=<id> from the home categories. Read on the client so the page
+  // stays static.
+  useEffect(() => {
+    const subject = new URLSearchParams(window.location.search).get("subject");
+    if (subject && subjects.some((s) => String(s.id) === subject)) {
+      setQueryFilters((p) => ({ ...p, subject_id: subject }));
+    }
+  }, [subjects]);
+
   const [debouncedQueryFilters, setDebouncedQueryFilters] =
     useState(queryFilters);
   useEffect(() => {
