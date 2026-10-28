@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import FavoriteTutorButton from "@/components/student/FavoriteTutorButton";
 import { useState } from "react";
 
 interface CVEducation {
@@ -128,6 +129,7 @@ export default function TutorProfileClient({
           >
             <ArrowLeft width={16} height={16} />
           </Link>
+          <FavoriteTutorButton tutorId={tutorId} />
         </div>
 
         {/* Bottom info overlay */}

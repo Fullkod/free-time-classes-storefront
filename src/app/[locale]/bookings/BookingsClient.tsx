@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Loader2,
   Sparkles,
+  Star,
   Video,
   XCircle,
 } from "lucide-react";
@@ -23,10 +24,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { StudentSidebarNav } from "@/components/ds/StudentSidebarNav";
+import LeaveReviewModal from "@/components/student/LeaveReviewModal";
 import { useAuth } from "@/context/UserContext";
 import { useTranslations } from "@/i18n/translations";
 import { isLessonInPast } from "@/lib/datetime/lessonTime";
 import { isPendingExpired } from "@/lib/bookings/pendingExpiry";
+import { isWithinReviewWindow } from "@/lib/reviews/reviewWindow";
+import { getReviewsByStudentAndBookingIds } from "@/lib/supabase/queries/reviews";
 import {
   lessonTimestampToDate,
   lessonTimestampToEpoch,
@@ -137,6 +141,8 @@ export default function BookingsClient({ locale }: { locale: string }) {
   const [tab, setTab] = useState<Tab>("upcoming");
   const [cancellingId, setCancellingId] = useState<number | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
+  const [reviewTarget, setReviewTarget] = useState<Booking | null>(null);
+  const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<number>>(new Set());
 
   const supabaseRef = useRef(createClient());
   const isBothRoles = !!user?.is_student && !!user?.is_tutor;
@@ -278,6 +284,39 @@ export default function BookingsClient({ locale }: { locale: string }) {
   );
 
   const visible = tab === "upcoming" ? upcoming : tab === "past" ? past : cancelled;
+
+  // F036: completed classes the student can still review (30-day window).
+  const reviewableIds = useMemo(
+    () =>
+      viewRole === "student"
+        ? bookings
+            .filter(
+              (b) => b.status === "completed" && isWithinReviewWindow(b.lesson?.scheduled_date_time)
+            )
+            .map((b) => b.id)
+        : [],
+    [bookings, viewRole]
+  );
+
+  useEffect(() => {
+    if (!user?.id || reviewableIds.length === 0) return;
+    let cancelled = false;
+    getReviewsByStudentAndBookingIds(user.id, reviewableIds)
+      .then((reviews) => {
+        if (cancelled) return;
+        setReviewedBookingIds(
+          new Set(
+            reviews
+              .map((review) => review.booking_id)
+              .filter((id): id is number => typeof id === "number")
+          )
+        );
+      })
+      .catch((err) => console.error("[bookings] reviews lookup failed:", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, reviewableIds]);
 
   const liveBooking = useMemo(() => {
     return upcoming.find(
@@ -616,6 +655,17 @@ export default function BookingsClient({ locale }: { locale: string }) {
                           {t("joinClass")}
                         </a>
                       )}
+                      {reviewableIds.includes(booking.id) &&
+                        !reviewedBookingIds.has(booking.id) && (
+                          <button
+                            type="button"
+                            onClick={() => setReviewTarget(booking)}
+                            className="inline-flex items-center gap-1 rounded-ft-sm border border-ft-line bg-ft-paper px-3 py-2 text-[11px] font-semibold text-ft-ink hover:bg-ft-surface-1"
+                          >
+                            <Star width={12} height={12} />
+                            {t("rateClass")}
+                          </button>
+                        )}
                       {isCancelable && (
                         <button
                           type="button"
@@ -652,6 +702,22 @@ export default function BookingsClient({ locale }: { locale: string }) {
       </div>
         </div>
       </div>
+
+      <LeaveReviewModal
+        open={reviewTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setReviewTarget(null);
+        }}
+        bookingId={reviewTarget?.id ?? null}
+        lessonId={null}
+        tutorId={reviewTarget?.tutor_id ?? null}
+        onCreated={(review) => {
+          if (typeof review.booking_id === "number") {
+            const id = review.booking_id;
+            setReviewedBookingIds((prev) => new Set(prev).add(id));
+          }
+        }}
+      />
 
       <Dialog
         open={cancelTarget !== null}

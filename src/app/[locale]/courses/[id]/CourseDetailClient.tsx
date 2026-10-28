@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import FavoriteTutorButton from "@/components/student/FavoriteTutorButton";
 import { Suspense, useState } from "react";
 
 interface CVEducation {
@@ -200,42 +201,45 @@ export default function CourseDetailClient({
 
           {/* Tutor row */}
           {tutor && (
-            <Link
-              href={`/${locale}/tutors/${tutor.id}`}
-              className="flex items-center gap-3 border-y border-ft-line-soft py-4 transition-colors hover:bg-ft-paper-deep/40"
-            >
-              {tutor.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={tutor.avatarUrl}
-                  alt={tutor.username}
-                  className="h-10 w-10 rounded-full object-cover"
-                />
-              ) : (
-                <span
-                  className="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold text-white"
-                  style={{ backgroundColor: getAvatarColor(tutor.username) }}
-                >
-                  {tutor.username[0]?.toUpperCase() ?? "T"}
+            <div className="flex items-center gap-2 border-y border-ft-line-soft">
+              <Link
+                href={`/${locale}/tutors/${tutor.id}`}
+                className="flex min-w-0 flex-1 items-center gap-3 py-4 transition-colors hover:bg-ft-paper-deep/40"
+              >
+                {tutor.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={tutor.avatarUrl}
+                    alt={tutor.username}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <span
+                    className="grid h-10 w-10 place-items-center rounded-full text-sm font-semibold text-white"
+                    style={{ backgroundColor: getAvatarColor(tutor.username) }}
+                  >
+                    {tutor.username[0]?.toUpperCase() ?? "T"}
+                  </span>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-semibold tracking-tight text-ft-ink">
+                    {tutor.username}
+                  </div>
+                  <div className="text-[11px] text-ft-ink-3">
+                    {tutor.years_of_experience != null && tutor.years_of_experience > 0
+                      ? `${tutor.years_of_experience}+ ${tProfile("yearsExperience")} · `
+                      : ""}
+                    {tutor.total_reviews > 0
+                      ? `${tutor.total_reviews} ${tProfile("reviews")}`
+                      : ""}
+                  </div>
+                </div>
+                <span className="rounded-full border border-ft-line bg-ft-paper px-3 py-1.5 text-[12px] font-semibold text-ft-ink">
+                  {t("viewTutorProfile")}
                 </span>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="text-[13px] font-semibold tracking-tight text-ft-ink">
-                  {tutor.username}
-                </div>
-                <div className="text-[11px] text-ft-ink-3">
-                  {tutor.years_of_experience != null && tutor.years_of_experience > 0
-                    ? `${tutor.years_of_experience}+ ${tProfile("yearsExperience")} · `
-                    : ""}
-                  {tutor.total_reviews > 0
-                    ? `${tutor.total_reviews} ${tProfile("reviews")}`
-                    : ""}
-                </div>
-              </div>
-              <span className="rounded-full border border-ft-line bg-ft-paper px-3 py-1.5 text-[12px] font-semibold text-ft-ink">
-                {t("viewTutorProfile")}
-              </span>
-            </Link>
+              </Link>
+              <FavoriteTutorButton tutorId={tutor.id} className="border border-ft-line" />
+            </div>
           )}
 
           {/* Stats grid */}

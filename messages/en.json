@@ -1266,7 +1266,10 @@
     "requestCustomDescription": "Ask the tutor for a class outside their published availability. Make the most of your free time.",
     "tabReviews": "Reviews",
     "priceFromHour": "from {price}€",
-    "priceFromHourHint": "Cancel up to {hours}h before at no cost."
+    "priceFromHourHint": "Cancel up to {hours}h before at no cost.",
+    "favorite": "Save tutor",
+    "unfavorite": "Remove from saved",
+    "favoriteError": "Could not update your saved tutors."
   },
   "requestCustomClass": {
     "courseLabel": "Course",
@@ -1356,7 +1359,8 @@
     "cancelWindowClosed": "Can no longer be cancelled (less than {hours}h)",
     "rejectConfirmTitle": "Reject this request?",
     "rejectConfirmBody": "The student will be notified and the time slot will become available again.",
-    "keepBooking": "Go back"
+    "keepBooking": "Go back",
+    "rateClass": "Rate"
   },
   "messagesPage": {
     "title": "Messages",

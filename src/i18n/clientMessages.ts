@@ -16,7 +16,7 @@ export const SHELL_NAMESPACES = ["errorPage", "home", "languageSwitcher", "navba
 
 export const PAGE_NAMESPACES: Record<string, readonly string[]> = {
   "/auth": ["authCallback", "passwordReset"],
-  "/bookings": ["bookingsPage"],
+  "/bookings": ["bookingsPage", "studentProfile"],
   "/courses": ["coursesCatalog", "studentProfile"],
   "/courses/[id]": ["courseDetail", "tutorPublicProfile"],
   "/courses/create": ["teacherProfile"],

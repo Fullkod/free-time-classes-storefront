@@ -1266,7 +1266,10 @@
     "requestCustomDescription": "Pídele al profesor una clase fuera de su disponibilidad publicada. Aprovecha tu tiempo libre.",
     "tabReviews": "Reseñas",
     "priceFromHour": "desde {price}€",
-    "priceFromHourHint": "Cancela hasta {hours} h antes sin coste."
+    "priceFromHourHint": "Cancela hasta {hours} h antes sin coste.",
+    "favorite": "Guardar profesor",
+    "unfavorite": "Quitar de guardados",
+    "favoriteError": "No se pudo actualizar tus profesores guardados."
   },
   "requestCustomClass": {
     "courseLabel": "Curso",
@@ -1356,7 +1359,8 @@
     "cancelWindowClosed": "Ya no se puede cancelar (menos de {hours} h)",
     "rejectConfirmTitle": "¿Rechazar esta solicitud?",
     "rejectConfirmBody": "El estudiante recibirá un aviso y el horario volverá a quedar disponible.",
-    "keepBooking": "Volver"
+    "keepBooking": "Volver",
+    "rateClass": "Valorar"
   },
   "messagesPage": {
     "title": "Mensajes",
