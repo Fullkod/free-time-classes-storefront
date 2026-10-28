@@ -52,6 +52,9 @@ export default function InternalMessagingPanel({
   const t = useTranslations(namespace);
   const tm = useTranslations(`${namespace}.messaging`);
   const tmRef = useRef(tm);
+  // Some accounts have no username yet: never render an empty name (F070).
+  const displayName = (username: string | null | undefined) =>
+    username?.trim() || tm("unnamedUser");
   tmRef.current = tm;
   const loadRequestIdRef = useRef(0);
 
@@ -497,7 +500,7 @@ export default function InternalMessagingPanel({
                       >
                         <div className="min-w-0">
                           <p className="truncate text-[13px] font-semibold text-ft-ink">
-                            {contact.username}
+                            {displayName(contact.username)}
                           </p>
                         </div>
                         <Button
@@ -539,7 +542,7 @@ export default function InternalMessagingPanel({
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="truncate text-[14px] font-semibold tracking-tight text-ft-ink">
-                            {conversation.other_user.username}
+                            {displayName(conversation.other_user.username)}
                           </span>
                           {conversation.unread_count > 0 ? (
                             <span className="grid h-[18px] min-w-[18px] place-items-center rounded-full bg-ft-accent px-1.5 text-[10px] font-bold text-[#1a1410]">
@@ -576,7 +579,7 @@ export default function InternalMessagingPanel({
                         className="flex items-center justify-between gap-2 rounded-ft bg-ft-paper px-3 py-2"
                       >
                         <span className="truncate text-[13px] font-medium text-ft-ink">
-                          {contact.username}
+                          {displayName(contact.username)}
                         </span>
                         <Button
                           type="button"
@@ -610,7 +613,7 @@ export default function InternalMessagingPanel({
               <div className="min-w-0">
                 <h2 className="truncate text-[14px] font-semibold tracking-tight text-ft-ink sm:text-[15px]">
                   {selectedConversation
-                    ? tm("chatWith", { name: selectedConversation.other_user.username })
+                    ? tm("chatWith", { name: displayName(selectedConversation.other_user.username) })
                     : tm("selectConversation")}
                 </h2>
                 <p className="text-[11px] text-ft-ink-3">

@@ -313,7 +313,8 @@
       "messagePlaceholder": "Write a message...",
       "sending": "Sending...",
       "send": "Send",
-      "notAuthenticated": "You must be logged in to use messaging."
+      "notAuthenticated": "You must be logged in to use messaging.",
+      "unnamedUser": "Unnamed user"
     },
     "title": "You",
     "openSettings": "Open settings",
@@ -954,7 +955,8 @@
       "messagePlaceholder": "Write a message...",
       "sending": "Sending...",
       "send": "Send",
-      "notAuthenticated": "You must be logged in to use messaging."
+      "notAuthenticated": "You must be logged in to use messaging.",
+      "unnamedUser": "Unnamed user"
     },
     "onboarding": {
       "title": "Get your profile ready for bookings",
@@ -1460,7 +1462,8 @@
       "messagePlaceholder": "Write a message...",
       "sending": "Sending...",
       "send": "Send",
-      "notAuthenticated": "You must be logged in to use messaging."
+      "notAuthenticated": "You must be logged in to use messaging.",
+      "unnamedUser": "Unnamed user"
     }
   },
   "notifications": {

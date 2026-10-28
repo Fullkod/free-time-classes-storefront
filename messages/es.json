@@ -313,7 +313,8 @@
       "messagePlaceholder": "Escribe un mensaje...",
       "sending": "Enviando...",
       "send": "Enviar",
-      "notAuthenticated": "Debes iniciar sesión para usar la mensajería."
+      "notAuthenticated": "Debes iniciar sesión para usar la mensajería.",
+      "unnamedUser": "Usuario sin nombre"
     },
     "title": "Tú",
     "openSettings": "Abrir ajustes",
@@ -954,7 +955,8 @@
       "messagePlaceholder": "Escribe un mensaje...",
       "sending": "Enviando...",
       "send": "Enviar",
-      "notAuthenticated": "Debes iniciar sesión para usar la mensajería."
+      "notAuthenticated": "Debes iniciar sesión para usar la mensajería.",
+      "unnamedUser": "Usuario sin nombre"
     },
     "onboarding": {
       "title": "Prepara tu perfil para recibir reservas",
@@ -1460,7 +1462,8 @@
       "messagePlaceholder": "Escribe un mensaje...",
       "sending": "Enviando...",
       "send": "Enviar",
-      "notAuthenticated": "Debes iniciar sesión para usar la mensajería."
+      "notAuthenticated": "Debes iniciar sesión para usar la mensajería.",
+      "unnamedUser": "Usuario sin nombre"
     }
   },
   "notifications": {
