@@ -253,6 +253,8 @@ export async function POST(request: NextRequest) {
         subject_id: subjectId,
         scheduled_date_time: scheduledDateTime,
         duration_minutes: durationMinutes,
+        actor_name: studentUser?.username ?? null,
+        subject_name: subjectRow.name,
       },
     });
 

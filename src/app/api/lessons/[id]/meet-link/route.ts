@@ -101,6 +101,7 @@ export async function PATCH(
           title: "Enlace de la videollamada",
           body: "Tu tutor ha añadido el enlace de la videollamada de tu clase:",
           data: {
+            event: "meet_link_added",
             lesson_id: lessonId,
             meet_link: meetLink,
             scheduled_date_time: lesson.scheduled_date_time,

@@ -171,6 +171,7 @@ export async function POST(request: NextRequest) {
         booking_id: bookingId,
         lesson_id: booking.lesson_id,
         ...(cancelledStart ? { scheduled_date_time: cancelledStart } : {}),
+        actor_name: studentUser?.username ?? null,
       },
     });
 

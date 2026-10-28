@@ -315,6 +315,7 @@ export async function respondToBooking(
       data: {
         booking_id: bookingId,
         lesson_id: lessonIdForFlow,
+        actor_name: tutorUser?.username ?? null,
         ...(finalMeetLink ? { meet_link: finalMeetLink } : {}),
         ...(scheduledForNotify ? { scheduled_date_time: scheduledForNotify } : {}),
       },
@@ -393,7 +394,11 @@ export async function respondToBooking(
     type: "booking_rejected",
     title: "Solicitud rechazada",
     body: `${tutorUserReject?.username ?? "Tu tutor"} no pudo aceptar tu solicitud de clase.`,
-    data: { booking_id: bookingId, lesson_id: booking.lesson_id },
+    data: {
+      booking_id: bookingId,
+      lesson_id: booking.lesson_id,
+      actor_name: tutorUserReject?.username ?? null,
+    },
   });
 
   return { httpStatus: 200, payload: { ok: true } };

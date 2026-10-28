@@ -157,6 +157,9 @@ export async function requestCourseBooking(
       course_id: course.id,
       student_id: args.studentId,
       scheduled_date_time: start,
+      actor_name: studentUser?.username ?? null,
+      subject_name: course.title,
+      duration_minutes: course.duration_minutes,
     },
   });
 

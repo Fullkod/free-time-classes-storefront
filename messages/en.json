@@ -1491,7 +1491,43 @@
     "promoTag": "Mentorship Pro",
     "promoTitle": "Level up your learning journey",
     "promoDescription": "Unlock premium 1:1 sessions and exclusive editorial resources.",
-    "promoCta": "View plans"
+    "promoCta": "View plans",
+    "items": {
+      "someone": "Someone",
+      "booking_request": {
+        "title": "New class request",
+        "body": "{name} has requested a class with you.",
+        "bodyWithClass": "{name} has requested a class with you: «{subject}» ({minutes} min)."
+      },
+      "booking_custom_request": {
+        "title": "Class request outside your availability",
+        "body": "{name} has asked you for a class at another time.",
+        "bodyWithClass": "{name} has asked you for a class at another time: {subject} ({minutes} min)."
+      },
+      "booking_confirmed": {
+        "title": "Class confirmed",
+        "body": "{name} has confirmed your class."
+      },
+      "meetLinkAdded": {
+        "title": "Video call link",
+        "body": "Your tutor has added the video call link for your class."
+      },
+      "booking_rejected": {
+        "title": "Request declined",
+        "body": "{name} couldn't accept your class request."
+      },
+      "booking_cancelled": {
+        "title": "Class cancelled",
+        "body": "{name} has cancelled their class request."
+      },
+      "booking_expired": {
+        "title": "Request expired",
+        "body": "{name} didn't reply to your class request in time. You can book another time."
+      },
+      "message_received": {
+        "title": "New message from {name}"
+      }
+    }
   },
   "dashboard": {
     "welcome": "Welcome back, {name}!",

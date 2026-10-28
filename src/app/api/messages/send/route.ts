@@ -167,7 +167,7 @@ async function notifyOtherParticipants(args: {
         type: "message_received",
         title: `Nuevo mensaje de ${senderName}`,
         body: preview,
-        data: { conversation_id: args.conversationId },
+        data: { conversation_id: args.conversationId, actor_name: sender?.username ?? null },
       })
     )
   );

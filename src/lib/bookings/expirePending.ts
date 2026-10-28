@@ -88,7 +88,12 @@ export async function expirePendingBookings(
         type: "booking_expired",
         title: "Solicitud caducada",
         body: `${tutorName.get(row.tutor_id) ?? "Tu tutor"} no respondió a tiempo a tu solicitud de clase. Puedes reservar otra hora.`,
-        data: { booking_id: row.id, lesson_id: row.lesson_id, scheduled_date_time: start },
+        data: {
+          booking_id: row.id,
+          lesson_id: row.lesson_id,
+          scheduled_date_time: start,
+          actor_name: tutorName.get(row.tutor_id) ?? null,
+        },
       });
     }
   }

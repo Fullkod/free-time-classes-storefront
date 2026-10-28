@@ -1491,7 +1491,43 @@
     "promoTag": "Mentoría Pro",
     "promoTitle": "Lleva tu aprendizaje al siguiente nivel",
     "promoDescription": "Desbloquea sesiones 1:1 con mentores premium y recursos exclusivos.",
-    "promoCta": "Ver planes"
+    "promoCta": "Ver planes",
+    "items": {
+      "someone": "Alguien",
+      "booking_request": {
+        "title": "Nueva solicitud de clase",
+        "body": "{name} te ha pedido una clase.",
+        "bodyWithClass": "{name} te ha pedido una clase de «{subject}» ({minutes} min)."
+      },
+      "booking_custom_request": {
+        "title": "Solicitud de clase fuera de tu disponibilidad",
+        "body": "{name} te ha pedido una clase en otra hora.",
+        "bodyWithClass": "{name} te ha pedido una clase de {subject} ({minutes} min) en otra hora."
+      },
+      "booking_confirmed": {
+        "title": "Clase confirmada",
+        "body": "{name} ha confirmado tu clase."
+      },
+      "meetLinkAdded": {
+        "title": "Enlace de la videollamada",
+        "body": "Tu tutor ha añadido el enlace de la videollamada de tu clase."
+      },
+      "booking_rejected": {
+        "title": "Solicitud rechazada",
+        "body": "{name} no pudo aceptar tu solicitud de clase."
+      },
+      "booking_cancelled": {
+        "title": "Clase cancelada",
+        "body": "{name} ha cancelado su solicitud de clase."
+      },
+      "booking_expired": {
+        "title": "Solicitud caducada",
+        "body": "{name} no respondió a tiempo a tu solicitud de clase. Puedes reservar otra hora."
+      },
+      "message_received": {
+        "title": "Nuevo mensaje de {name}"
+      }
+    }
   },
   "dashboard": {
     "welcome": "¡Bienvenido de nuevo, {name}!",

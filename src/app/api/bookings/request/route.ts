@@ -188,6 +188,9 @@ export async function POST(request: NextRequest) {
         lesson_id: updatedLesson.id,
         student_id: user.id,
         scheduled_date_time: lesson.scheduled_date_time,
+        actor_name: studentUser?.username ?? null,
+        subject_name: subjectName,
+        duration_minutes: lesson.duration_minutes ?? null,
       },
     });
 

@@ -89,6 +89,48 @@ function getNotificationHref(n: Notification, locale: string): string {
   }
 }
 
+type Translate = (key: string, values?: Record<string, string | number>) => string;
+
+/**
+ * Title and body in the viewer's language (F069). Rows store a Spanish
+ * title/body (also used for WhatsApp); rows that carry `actor_name` are
+ * rendered from their type instead. Older rows fall back to the stored text.
+ */
+function localizedText(n: Notification, t: Translate): { title: string; body: string | null } {
+  const data = n.data ?? {};
+  if (!("actor_name" in data) && data.event !== "meet_link_added") {
+    return { title: n.title, body: n.body };
+  }
+  const name = typeof data.actor_name === "string" && data.actor_name.trim()
+    ? data.actor_name.trim()
+    : t("items.someone");
+  const subject = typeof data.subject_name === "string" ? data.subject_name : "";
+  const minutes = typeof data.duration_minutes === "number" ? data.duration_minutes : 0;
+  const withClass = subject && minutes ? "bodyWithClass" : "body";
+  switch (n.type) {
+    case "booking_request":
+    case "booking_custom_request":
+      return {
+        title: t(`items.${n.type}.title`),
+        body: t(`items.${n.type}.${withClass}`, { name, subject, minutes }),
+      };
+    case "booking_confirmed":
+      if (data.event === "meet_link_added") {
+        return { title: t("items.meetLinkAdded.title"), body: t("items.meetLinkAdded.body") };
+      }
+      return { title: t("items.booking_confirmed.title"), body: t("items.booking_confirmed.body", { name }) };
+    case "booking_cancelled":
+    case "booking_rejected":
+    case "booking_expired":
+      return { title: t(`items.${n.type}.title`), body: t(`items.${n.type}.body`, { name }) };
+    case "message_received":
+      // The body is the message preview: user content, never translated.
+      return { title: t("items.message_received.title", { name }), body: n.body };
+    default:
+      return { title: n.title, body: n.body };
+  }
+}
+
 function isToday(dateStr: string): boolean {
   const d = new Date(dateStr);
   const now = new Date();
@@ -283,6 +325,8 @@ function NotificationRow({
   onNavigate: (href: string) => void;
   divider: boolean;
 }) {
+  const t = useTranslations("notificationsPage");
+  const text = localizedText(item, t);
   return (
     <button
       type="button"
@@ -314,7 +358,7 @@ function NotificationRow({
                 : "font-medium text-ft-ink-2"
             )}
           >
-            {item.title}
+            {text.title}
           </h3>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="text-[10px] font-semibold uppercase tracking-[0.06em] text-ft-ink-3">
@@ -325,14 +369,14 @@ function NotificationRow({
             )}
           </div>
         </div>
-        {item.body && (
+        {text.body && (
           <p
             className={cn(
               "mt-1 text-[12.5px] leading-relaxed",
               !item.is_read ? "text-ft-ink-2" : "text-ft-ink-3"
             )}
           >
-            {item.body}
+            {text.body}
           </p>
         )}
       </div>
