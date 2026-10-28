@@ -62,3 +62,17 @@ export function parseReply(body: string): RespondAction | null {
   if (reject > confirm) return "reject";
   return null;
 }
+
+/**
+ * Booking code in a reply ("SÍ 47", "no #47") so a tutor with several pending
+ * requests can say which one (F071). A message that is only "1" or "2" is the
+ * numeric shortcut, not a code. Several different numbers = no code.
+ */
+export function parseBookingCode(body: string): number | null {
+  const tokens = normalize((body ?? "").trim()).match(/[a-z0-9]+/g) ?? [];
+  if (tokens.length === 1 && (tokens[0] === CONFIRM_DIGIT || tokens[0] === REJECT_DIGIT)) {
+    return null;
+  }
+  const numbers = new Set(tokens.filter((tok) => /^\d{1,9}$/.test(tok)).map(Number));
+  return numbers.size === 1 ? [...numbers][0] : null;
+}

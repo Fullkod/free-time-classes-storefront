@@ -2,8 +2,10 @@ import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { verifySignature } from "@/lib/whatsapp/verifySignature";
-import { parseReply } from "@/lib/whatsapp/parseReply";
-import { matchPendingBooking } from "@/lib/whatsapp/matchBooking";
+import { parseBookingCode, parseReply } from "@/lib/whatsapp/parseReply";
+import { matchTutorPendingBookings, type PendingForReply } from "@/lib/whatsapp/matchBooking";
+import { formatLessonTime } from "@/lib/whatsapp/messages";
+import { loadTutorTimeZone } from "@/lib/availability/tutorTimeZone";
 import { respondToBooking } from "@/lib/bookings/respond";
 import { isOpenWaConfigured, sendText } from "@/lib/whatsapp/openwa";
 
@@ -28,6 +30,16 @@ function adminClient() {
 }
 
 const INBOUND_BODY_KEEP = 40;
+
+/** "#47 · 3 de noviembre · 09:00 (hora de Havana)" lines for the tutor's pending requests. */
+function pendingList(pending: PendingForReply[], timeZone: string): string {
+  return pending
+    .map((p) => {
+      const when = formatLessonTime(p.scheduledDateTime, timeZone);
+      return `• *#${p.bookingId}*${when ? ` · ${when}` : ""}`;
+    })
+    .join("\n");
+}
 
 export async function POST(request: NextRequest) {
   // Read the RAW body — HMAC must be verified against it, not re-serialized JSON.
@@ -120,9 +132,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "DB error" }, { status: 500 });
   }
 
-  // 4. Resolve which pending booking this reply refers to (handles @lid)
-  const match = await matchPendingBooking(admin, from);
-  if (!match) {
+  // 4. Resolve the tutor and their pending bookings (handles @lid)
+  const match = await matchTutorPendingBookings(admin, from);
+  if (!match || match.pending.length === 0) {
     await admin
       .from("wa_inbound_events")
       .update({ action: "no_match" })
@@ -135,7 +147,7 @@ export async function POST(request: NextRequest) {
   if (!action) {
     await admin
       .from("wa_inbound_events")
-      .update({ action: "unrecognized", booking_id: match.bookingId })
+      .update({ action: "unrecognized" })
       .eq("idempotency_key", idemKey);
     if (from && isOpenWaConfigured()) {
       await sendText(
@@ -146,29 +158,56 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, skip: "unrecognized" });
   }
 
-  // 6. Act on the booking (reuses the same logic as the tutor API route)
+  // 6. Which booking (F071): the code in the reply, or the only pending one.
+  // Never guess between several.
+  const code = parseBookingCode(body);
+  const target = code != null
+    ? match.pending.find((p) => p.bookingId === code)
+    : match.pending.length === 1
+      ? match.pending[0]
+      : undefined;
+  if (!target) {
+    await admin
+      .from("wa_inbound_events")
+      .update({ action: code != null ? "unknown_code" : "ambiguous" })
+      .eq("idempotency_key", idemKey);
+    if (isOpenWaConfigured()) {
+      const list = pendingList(match.pending, await loadTutorTimeZone(admin, match.tutorId));
+      const intro = code != null
+        ? `No tienes ninguna solicitud pendiente con el código #${code}. Estas son las pendientes:`
+        : "Tienes varias solicitudes pendientes. ¿Cuál quieres gestionar?";
+      const example = match.pending[0].bookingId;
+      await sendText(
+        from,
+        `${intro}\n${list}\n\nResponde con el código, por ejemplo *SÍ ${example}* o *NO ${example}*.`,
+      ).catch(() => {});
+    }
+    return NextResponse.json({ ok: true, skip: code != null ? "unknown_code" : "ambiguous" });
+  }
+
+  // 7. Act on the booking (reuses the same logic as the tutor API route)
   const result = await respondToBooking(admin, {
-    bookingId: match.bookingId,
+    bookingId: target.bookingId,
     tutorId: match.tutorId,
     action,
   });
 
   await admin
     .from("wa_inbound_events")
-    .update({ action, booking_id: match.bookingId })
+    .update({ action, booking_id: target.bookingId })
     .eq("idempotency_key", idemKey);
 
-  // 7. Confirmation back to the tutor (reply to the same chat)
+  // 8. Confirmation back to the tutor (reply to the same chat)
   if (from && isOpenWaConfigured()) {
     let reply: string;
     if (result.httpStatus === 200 && action === "confirm") {
       const meetLink =
         typeof result.payload.meetLink === "string" ? result.payload.meetLink : "";
       reply = meetLink
-        ? `✅ Clase confirmada. Enlace de la videollamada:\n${meetLink}`
-        : "✅ Clase confirmada.";
+        ? `✅ Clase #${target.bookingId} confirmada. Enlace de la videollamada:\n${meetLink}`
+        : `✅ Clase #${target.bookingId} confirmada.`;
     } else if (result.httpStatus === 200) {
-      reply = "❌ Solicitud rechazada.";
+      reply = `❌ Solicitud #${target.bookingId} rechazada.`;
     } else if (result.payload.code === "request_expired") {
       reply = "⌛ Esta solicitud ya había caducado.";
     } else if (result.httpStatus === 409) {
@@ -179,5 +218,5 @@ export async function POST(request: NextRequest) {
     await sendText(from, reply).catch(() => {});
   }
 
-  return NextResponse.json({ ok: true, action, bookingId: match.bookingId });
+  return NextResponse.json({ ok: true, action, bookingId: target.bookingId });
 }

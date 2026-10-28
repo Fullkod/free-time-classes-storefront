@@ -22,7 +22,7 @@ const MONTHS_ES = [
  * `timeZone` (PRP-002, tutor recipients) the time is converted to that zone
  * and labelled: "15 de junio · 08:30 (hora de Havana)".
  */
-function formatLessonTime(value: unknown, timeZone?: string): string | null {
+export function formatLessonTime(value: unknown, timeZone?: string): string | null {
   if (typeof value !== "string") return null;
   const wall = timeZone
     ? convertWallClock(value.replace(" ", "T").slice(0, 19), BUSINESS_TIMEZONE, timeZone)
@@ -57,13 +57,18 @@ export function buildWhatsAppMessage(params: {
 
   // For requests the tutor can act on by replying to this WhatsApp, spell out
   // how to confirm or reject. (In-app these use buttons, so it's WhatsApp-only.)
+  // The booking code lets a tutor with several pending requests pick one (F071).
   if (type === "booking_request" || type === "booking_custom_request") {
+    const code = typeof data.booking_id === "number" ? data.booking_id : null;
     lines.push(
       "",
       "Responde a este mensaje para gestionarla:",
       "✅ *SÍ* (o _ok_, _vale_, _confirmar_) para aceptar.",
       "❌ *NO* (o _cancelar_, _rechazar_) para rechazar.",
     );
+    if (code != null) {
+      lines.push(`Si tienes varias pendientes, añade el código: *SÍ ${code}* o *NO ${code}*.`);
+    }
   }
 
   lines.push("", "_FreeTime Classes_");
