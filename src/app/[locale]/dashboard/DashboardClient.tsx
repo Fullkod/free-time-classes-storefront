@@ -29,6 +29,7 @@ import {
 import { getCourseCoverPublicUrl, getPublicUrl } from "@/lib/supabase/storage";
 import type { StudentProfile } from "@/types/student";
 import type { DashboardRecommendedCourse } from "./DashboardDeferredRecommended";
+import { handleExternalLinkClick } from "@/lib/openExternal";
 
 interface DashboardUser {
   username: string | null;
@@ -249,6 +250,7 @@ export default function DashboardClient({
             href={next.meetLink}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleExternalLinkClick}
             className="inline-flex items-center gap-1.5 rounded-full bg-ft-accent px-4 py-2.5 text-[13px] font-semibold text-[#1a1410] transition-colors hover:brightness-95"
           >
             {t("joinClass")}

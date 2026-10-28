@@ -59,6 +59,7 @@ import {
   useViewerTimeZone,
 } from "@/lib/datetime/viewerTime";
 import { isPendingExpired } from "@/lib/bookings/pendingExpiry";
+import { openExternal } from "@/lib/openExternal";
 
 type PendingBookingItem = {
   booking: Booking;
@@ -754,7 +755,7 @@ export default function TutorDashboardClient({
                       {lesson.meet_link ? (
                         <Button
                           className="mt-4 w-full rounded-ft-md border border-ft-line bg-white text-ft-ink-2 hover:bg-ft-surface-1"
-                          onClick={() => window.open(lesson.meet_link!, "_blank")}
+                          onClick={() => openExternal(lesson.meet_link!)}
                         >
                           <Video className="mr-2 h-4 w-4" />
                           {isCurrent ? td("resumeClass") : td("openVideoCall")}
@@ -1092,7 +1093,7 @@ export default function TutorDashboardClient({
                                     size="sm"
                                     variant={isCurrent ? "default" : "outline"}
                                     className={`gap-1 ${isCurrent ? "bg-ft-ink hover:bg-[#2a241b]" : ""}`}
-                                    onClick={() => window.open(lesson.meet_link!, "_blank")}
+                                    onClick={() => openExternal(lesson.meet_link!)}
                                   >
                                     <Video className="h-3.5 w-3.5" />
                                     {isCurrent ? td("resumeClass") : td("openVideoCall")}

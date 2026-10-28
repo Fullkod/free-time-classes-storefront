@@ -43,6 +43,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { getPublicUrl } from "@/lib/supabase/storage";
 import { cn } from "@/lib/utils";
+import { handleExternalLinkClick } from "@/lib/openExternal";
 
 type BookingStatus =
   | "pending"
@@ -506,6 +507,7 @@ export default function BookingsClient({ locale }: { locale: string }) {
                 href={liveBooking.lesson.meet_link}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={handleExternalLinkClick}
                 className="inline-flex items-center gap-1.5 rounded-full bg-[#1a1410] px-3.5 py-2 text-[12px] font-semibold text-ft-paper"
               >
                 {t("joinClass")}
@@ -649,6 +651,7 @@ export default function BookingsClient({ locale }: { locale: string }) {
                           href={lesson.meet_link}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={handleExternalLinkClick}
                           className="inline-flex items-center gap-1 rounded-ft-sm border border-ft-line bg-ft-paper px-3 py-2 text-[11px] font-semibold text-ft-ink hover:bg-ft-surface-1"
                         >
                           <Video width={12} height={12} />
