@@ -33,6 +33,13 @@ PowerShell `Get-NetTCPConnection -LocalPort 3005 -State Listen | Stop-Process`. 
 y 500 en todas las paginas): parar el proceso del puerto 3000 y relanzar `npm run dev`; borrar tambien
 `.next/types/app/api/<ruta>` si `tsc` se queja de tipos de una ruta que ya no existe. Para scripts con regex o `\r\n`,
 escribirlos con la herramienta Write, no con heredoc + Python (el escape se pierde y deja un CR literal).
+Varios archivos del repo son CRLF: un script que busca un bloque multilinea debe normalizar `\r\n` a `\n`, editar
+y volver a CRLF si el archivo lo era. Tras un `git rm`, commitear con `git commit -m ... -- <rutas>`: si no, el
+borrado ya preparado se cuela en el siguiente commit.
+
+**Puertos:** 3000 y 3001 pueden estar ocupados por otro dev server del usuario (no tocarlo): levantar el de
+verificacion con `npx next dev --turbo -p 3002`. Para probar flujos con WhatsApp sin enviar nada, arrancarlo con
+`OPENWA_BASE_URL=http://127.0.0.1:9` (una variable real gana a `.env.local`) y firmar los webhooks con HMAC.
 
 **Lecturas de BD:** PostgREST con la service role solo para lecturas (`limit=0` para comprobar columnas). Para
 SQL de catalogo y DDL: `env -u SUPABASE_ACCESS_TOKEN supabase db query --linked --project-ref nqetxsifeulhfkwjdsbp "<sql>"`
