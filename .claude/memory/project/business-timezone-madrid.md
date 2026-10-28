@@ -25,4 +25,5 @@ pared en `tutor_profiles.timezone` (null = Madrid; migracion 046 la valida con t
 = null, ambigua = primera ocurrencia) y en el motor `computeOpenStartTimes`, que expande por fecha del tutor (±1 dia) y
 devuelve Madrid. `lessons` sigue en Madrid. El FullCalendar de «Mi agenda» va con `timeZone="UTC"` alimentado con hora
 del tutor (los Date que devuelve llevan la hora del tutor en sus campos UTC) y `now` memoizado. Las demas vistas siguen
-con `useViewerTimeZone` (navegador).
+con `useViewerTimeZone` (navegador). WhatsApp: `buildWhatsAppMessage` pone la hora en Madrid sin etiqueta para el estudiante y en la
+zona del tutor con «(hora de X)» para los tipos dirigidos al tutor (`TUTOR_RECIPIENT_TYPES` en `notifications.ts`).

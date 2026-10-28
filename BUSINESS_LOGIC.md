@@ -77,7 +77,7 @@ Uso principal en movil (BottomNav, app nativa via Capacitor) y desktop para prof
 - **Cancelacion del estudiante:** puede cancelar `pending` siempre y `confirmed` hasta N horas antes (`STUDENT_CANCEL_HOURS` en `src/lib/bookings/cancellationPolicy.ts`).
   Regla oficial (decision 2026-10-20): **24 h** antes del inicio, contadas en hora de Madrid.
 - **Custom request:** expira si el inicio esta a menos de 15 min (`CUSTOM_REQUEST_EXPIRY_MINUTES`).
-- **Horas:** todo se guarda e interpreta en hora de Madrid (wall-clock), independientemente de donde corra el servidor. Decision 2026-10-20: al usuario se le muestran en la zona horaria de su navegador (con etiqueta de zona); el estudiante que pide otra hora la escribe en su hora local. La agenda del tutor se introduce, de momento, en hora de Madrid.
+- **Horas:** todo se guarda e interpreta en hora de Madrid (wall-clock), independientemente de donde corra el servidor. Decision 2026-10-20: al usuario se le muestran en la zona horaria de su navegador (con etiqueta de zona); el estudiante que pide otra hora la escribe en su hora local. La agenda del tutor (franjas, bloqueos y franjas extra) va en **su** zona horaria (decision 2026-10-28, PRP-002): la confirma antes de su primera franja, al cambiarla las franjas conservan su hora local y las clases ya reservadas no se mueven; los WhatsApp que recibe como tutor llevan la hora en su zona.
   De cara al usuario (decision 2026-10-20) las horas se **convierten a la zona horaria del usuario** y se indica la zona.
 - **Moneda:** EUR para todo (decision 2026-10-20).
 - **Curso como unidad de reserva** (decision 2026-10-20, modelo tipo italki): la disponibilidad es una agenda general

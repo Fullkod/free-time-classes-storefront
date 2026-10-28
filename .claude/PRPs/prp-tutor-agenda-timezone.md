@@ -1,6 +1,6 @@
 # PRP-002: Agenda del tutor en su zona horaria
 
-> **Estado**: EN CURSO — fases 1-4b hechas (2026-10-28); falta la 5
+> **Estado**: COMPLETADO (2026-10-28)
 > **Fecha**: 2026-10-28
 > **Proyecto**: Free Time Classes
 > **Origen**: FRE0007, decision 11 (2026-10-28): «agenda del tutor en SU zona horaria ya (`tutor_profiles.timezone`, con migracion)». Continua PRP-001 (`.claude/PRPs/prp-course-booking-unit.md`) y las decisiones F047/F051 (2026-10-20).
@@ -142,7 +142,7 @@ create trigger tutor_profiles_validate_timezone
 - [x] Fase 3 — `ec9fa5e` (PATCH zona, excepciones y calendario API en zona del tutor)
 - [x] Fase 4 — `737cb7b` (UI; E2E con el tutor de prueba y navegador en America/Havana: cambio de zona por UI, zona invalida 400, extra pasado 400, extra 10-12 Havana → open-times 15:00/15:30/16:00 Madrid, indicador «ahora» correcto; datos QA borrados y zona restaurada a Madrid)
 - [x] Fase 4b — WhatsApp al tutor (`booking_request`, `booking_custom_request`, `booking_cancelled`) con la hora en su zona y etiqueta «(hora de Havana)»; la cancelacion al tutor ahora lleva la hora. Las notificaciones in-app no muestran hora en su texto: nada que cambiar. Simulado sin enviar (Havana 09:00 = Madrid 15:00 el 3/11)
-- [ ] Fase 5 — validacion final (build, E2E estudiante en Madrid/Mexico reservando a tutor en La Habana, docs). `TutorCoursesManager` no tiene paso de agenda propio (solo una pista tras publicar): no necesita campo de zona.
+- [x] Fase 5 — build OK; E2E en build de produccion: tutor en La Habana con extra 08:00-10:00 del 31/10 → estudiante en Madrid ve 13:00 (CET) y en Mexico 06:00 (GMT-6), reserva desde Mexico guarda 13:00 Madrid y el calendario del tutor la pinta 8:00-9:00; datos QA borrados y zona restaurada. `TutorCoursesManager` no tiene paso de agenda propio: no necesita campo de zona.
 
 ### Fase 1: Base de datos (migracion 046)
 **Objetivo**: zona fijada para los tutores con agenda, validacion de zonas en BD, semantica documentada en comentarios.
@@ -167,10 +167,10 @@ create trigger tutor_profiles_validate_timezone
 ### Fase 5: Validacion Final
 **Objetivo**: sistema funcionando end-to-end y documentacion al dia.
 **Validacion**:
-- [ ] `npx tsc --noEmit`, `npm run lint`, `npm run check:i18n-scopes`, `npm run build`
-- [ ] Playwright: tutor en La Habana crea agenda → estudiante en Madrid y otro en Mexico ven las horas correctas y reservan → la clase aparece en el calendario del tutor a su hora local
-- [ ] Datos `QA-` borrados
-- [ ] `BUSINESS_LOGIC.md` (linea «La agenda del tutor se introduce, de momento, en hora de Madrid»), `.claude/memory/project/business-timezone-madrid.md`, `reference/supabase-setup.md` (ultima migracion) y CLAUDE.md (siguiente migracion) actualizados; FRE0007 marcado con los commits
+- [x] `npx tsc --noEmit`, `npm run lint`, `npm run check:i18n-scopes`, `npm run build`
+- [x] Playwright: tutor en La Habana crea agenda → estudiante en Madrid y otro en Mexico ven las horas correctas y reservan → la clase aparece en el calendario del tutor a su hora local
+- [x] Datos `QA-` borrados
+- [x] `BUSINESS_LOGIC.md` (linea «La agenda del tutor se introduce, de momento, en hora de Madrid»), `.claude/memory/project/business-timezone-madrid.md`, `reference/supabase-setup.md` (ultima migracion) y CLAUDE.md (siguiente migracion) actualizados; FRE0007 marcado con los commits
 
 ---
 
