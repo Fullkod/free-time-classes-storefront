@@ -215,8 +215,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
 
       // Sign out from Supabase - this will clear the session and cookies
-      // The onAuthStateChange listener will automatically set user to null
-      const { error: authError } = await supabase.auth.signOut();
+      // The onAuthStateChange listener will automatically set user to null.
+      // Only this device: other sessions (phone, other browser) stay open (F085).
+      const { error: authError } = await supabase.auth.signOut({ scope: "local" });
 
       if (authError) {
         throw authError;
