@@ -9,6 +9,7 @@ import { resolveCourseTutorUser } from "@/lib/supabase/course-tutor";
 import {
   nowAsLessonTimestamp,
   startOfMonthAsLessonTimestamp,
+  startOfTodayAsLessonTimestamp,
 } from "@/lib/datetime/lessonTime";
 import type { StudentProfile } from "@/types/student";
 import type { DashboardRecommendedCourse } from "./DashboardDeferredRecommended";
@@ -164,12 +165,11 @@ export default async function DashboardPage({
       .map((l) => l.scheduled_date_time?.slice(0, 10))
       .filter((d): d is string => Boolean(d))
   );
+  // Lesson days are Madrid dates, so count back from Madrid's today (F108).
   let streakDays = 0;
-  const today = new Date();
+  const todayMs = Date.parse(`${startOfTodayAsLessonTimestamp().slice(0, 10)}T00:00:00Z`);
   for (let offset = 0; offset < 60; offset++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - offset);
-    const key = d.toISOString().slice(0, 10);
+    const key = new Date(todayMs - offset * 86_400_000).toISOString().slice(0, 10);
     if (completedDays.has(key)) {
       streakDays += 1;
     } else if (offset > 0) {
