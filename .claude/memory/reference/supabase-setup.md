@@ -16,11 +16,11 @@ y `server-queries/` (server).
 Hay dos `019_*` (prefijo duplicado historico, no renombrar). El esquema real difiere del SQL de
 `docs/proyecto-maestro.md` §4 (ej. ids, `scheduled_date_time`, conversaciones): fiarse de las migraciones / MCP.
 
-**Keepalive:** el plan free pausa el proyecto tras ~7 dias sin actividad. `.github/workflows/keep-supabase-alive.yml`
-llama a diario (06:00 UTC) al RPC `public.ping()` (migracion `025`) con los secrets `SUPABASE_URL` y `SUPABASE_ANON_KEY` del repo.
-Gotcha: GitHub desactiva los workflows programados tras 60 dias sin actividad en el repo (`disabled_inactivity`);
-paso entre julio y octubre de 2026 y se reactivo el 2026-10-19 via API de GitHub. Plan: moverlo a Vercel Cron junto
-con el cron diario (`/api/cron/daily`, que ya no genera huecos: completa clases y purga datos) (FRE0017).
+**Keepalive:** el plan free (decision 2026-10-28: sigue gratis) pausa el proyecto tras ~7 dias sin actividad. Lo evita
+el cron diario de Vercel (`/api/cron/daily`, 03:00 UTC, `vercel.json`), que llama al RPC `public.ping()` (migracion `025`)
+antes de completar clases y purgar datos (G-prod-1, FRE0017). Antes lo hacia un workflow de GitHub Actions, eliminado
+porque GitHub desactiva los workflows programados tras 60 dias sin actividad en el repo (paso de julio a octubre de 2026).
+Comprobar que el cron corre: `bookings` confirmadas ya pasadas deben quedar `completed` con `updated_at` ~03:00 UTC.
 
 **Acceso a datos reales:** la BD es la del piloto (usuarios reales). Ver `feedback/qa-testing-safety.md` antes de
 probar flujos que escriban datos.

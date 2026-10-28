@@ -3,6 +3,7 @@ import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js
 import { completeFinishedBookings } from "@/lib/bookings/completeFinished";
 
 // Daily job (Vercel Cron, see vercel.json). Idempotent:
+// - pings Supabase so the free plan does not pause the project after 7 idle days;
 // - marks confirmed bookings whose class already ended as completed;
 // - purges old WhatsApp inbound events.
 export const maxDuration = 60;
@@ -41,6 +42,11 @@ export async function GET(request: NextRequest) {
 
   // PRP-001: open times are computed on demand, so no slots are generated.
   const failures: Array<{ ruleId: string; error: string }> = [];
+
+  const { error: pingError } = await admin.rpc("ping");
+  if (pingError) {
+    failures.push({ ruleId: "keepalive-ping", error: pingError.message });
+  }
 
   const completion = await completeFinishedBookings(admin);
   if (completion.error) {
