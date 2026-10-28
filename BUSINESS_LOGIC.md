@@ -83,7 +83,10 @@ Uso principal en movil (BottomNav, app nativa via Capacitor) y desktop para prof
 - **Curso como unidad de reserva** (decision 2026-10-20, modelo tipo italki): la disponibilidad es una agenda general
   del profesor; el curso fija precio y duracion, y la clase reservada queda ligada al curso.
 - **Notificaciones** (`booking_request`, `booking_custom_request`, `booking_confirmed`, `booking_rejected`,
-  `booking_cancelled`, `message_received`): siempre in-app; por WhatsApp si el usuario tiene telefono y opt-in.
+  `booking_cancelled`, `booking_expired`, `message_received`): siempre in-app; por WhatsApp si el usuario tiene
+  telefono y consentimiento explicito (opt-in en Ajustes, desactivado por defecto, con fecha de consentimiento).
+- **Caducidad de pendientes:** una solicitud sin respuesta caduca a las 48 h o 2 h antes de la clase (lo que llegue
+  antes); se libera la hora y se avisa al estudiante.
 - **Resenas:** una por clase completada; el rating y el total de resenas del profesor se recalculan por trigger.
 - **Privacidad:** el usuario puede exportar sus datos y borrar su cuenta (GDPR).
 

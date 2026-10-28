@@ -8,7 +8,8 @@ por texto simple ("SI"/"1" confirma, "NO"/"2" rechaza).
 
 **Como funciona:**
 - Outbound: `insertNotification()` (`src/lib/notifications.ts`) es el embudo unico. Tras el insert in-app, si el
-  usuario tiene `phone` + `receive_whatsapp_notifications`, envia via `src/lib/whatsapp/openwa.ts` y guarda el
+  usuario tiene `phone` + `receive_whatsapp_notifications` (opt-in desde la 044: false por defecto, se activa en
+  Ajustes y un trigger guarda `whatsapp_consent_at`; los existentes se pusieron a false), envia via `src/lib/whatsapp/openwa.ts` y guarda el
   `messageId` en `wa_messages`. Todo en try/catch: WhatsApp nunca rompe la notificacion in-app ni la API.
   Si faltan envs (`isOpenWaConfigured()`), se omite en silencio.
 - Inbound: `POST /api/wa-webhook` (runtime nodejs, fuera del matcher del middleware) → HMAC sobre body crudo →

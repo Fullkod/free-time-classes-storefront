@@ -972,7 +972,7 @@
     "emailNotifications": "Email notifications",
     "smsNotifications": "SMS notifications",
     "whatsappNotifications": "WhatsApp notifications",
-    "whatsappNotificationsDescription": "Get class alerts on your WhatsApp. Requires a saved number.",
+    "whatsappNotificationsDescription": "I agree to receive alerts about my classes on WhatsApp (requests, confirmations and cancellations). Requires a saved number. You can withdraw it at any time.",
     "phoneLabel": "WhatsApp number",
     "phoneHint": "International format with country code, e.g. +34600111222.",
     "phoneInvalid": "Enter a valid number in international format (+34600111222).",
