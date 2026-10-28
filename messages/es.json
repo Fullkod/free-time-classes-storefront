@@ -922,6 +922,27 @@
       "sending": "Enviando...",
       "send": "Enviar",
       "notAuthenticated": "Debes iniciar sesión para usar la mensajería."
+    },
+    "onboarding": {
+      "title": "Prepara tu perfil para recibir reservas",
+      "description": "Completa estos pasos para que los estudiantes puedan reservar contigo.",
+      "progress": "{done} de {total}",
+      "done": "Hecho",
+      "profile": {
+        "title": "Completa tu perfil",
+        "description": "Añade una biografía y las materias que impartes.",
+        "action": "Completar"
+      },
+      "availability": {
+        "title": "Define tu disponibilidad",
+        "description": "Indica qué horas de la semana puedes dar clase.",
+        "action": "Añadir horario"
+      },
+      "course": {
+        "title": "Publica tu primer curso",
+        "description": "El curso fija el precio y la duración de tus clases.",
+        "action": "Crear curso"
+      }
     }
   },
   "settingsPage": {

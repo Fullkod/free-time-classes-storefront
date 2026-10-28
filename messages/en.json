@@ -922,6 +922,27 @@
       "sending": "Sending...",
       "send": "Send",
       "notAuthenticated": "You must be logged in to use messaging."
+    },
+    "onboarding": {
+      "title": "Get your profile ready for bookings",
+      "description": "Complete these steps so students can book you.",
+      "progress": "{done} of {total}",
+      "done": "Done",
+      "profile": {
+        "title": "Complete your profile",
+        "description": "Add a bio and the subjects you teach.",
+        "action": "Complete"
+      },
+      "availability": {
+        "title": "Set your availability",
+        "description": "Tell students which hours of the week you can teach.",
+        "action": "Add hours"
+      },
+      "course": {
+        "title": "Publish your first course",
+        "description": "The course sets the price and length of your classes.",
+        "action": "Create course"
+      }
     }
   },
   "settingsPage": {

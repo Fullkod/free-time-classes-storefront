@@ -24,10 +24,12 @@ import TutorCoursesManager from "@/components/teacher/TutorCoursesManager";
 import TutorSubjectsManager from "@/components/teacher/TutorSubjectsManager";
 import TutorReviewsSection from "@/components/teacher/TutorReviewsSection";
 import TutorCVSection from "@/components/teacher/TutorCVSection";
+import TutorOnboardingCard from "@/components/teacher/TutorOnboardingCard";
 import InternalMessagingPanel from "@/components/messages/InternalMessagingPanel";
 import { StudentSidebarNav } from "@/components/ds/StudentSidebarNav";
 import { useAuth } from "@/context/UserContext";
 import { useTranslations } from "@/i18n/translations";
+import { createClient } from "@/lib/supabase/client";
 import { getPublicUrl } from "@/lib/supabase/storage";
 import { cn, getAvatarColor } from "@/lib/utils";
 import type { CourseWithRelations } from "@/types/course";
@@ -77,12 +79,38 @@ export default function TeacherProfileClient({
   const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
   const [courses, setCourses] = useState<CourseWithRelations[]>(initialCourses);
   const [calendarRefresh, setCalendarRefresh] = useState(0);
+  const [hasAvailability, setHasAvailability] = useState<boolean | null>(null);
 
   useEffect(() => {
     setTutorProfile(initialTutorProfile);
     setSubjects(initialSubjects);
     setCourses(initialCourses);
   }, [initialTutorProfile, initialSubjects, initialCourses]);
+
+  // Onboarding step 2: an active weekly rule. Rechecked when the agenda changes.
+  useEffect(() => {
+    let cancelled = false;
+    void createClient()
+      .from("tutor_availability")
+      .select("id", { count: "exact", head: true })
+      .eq("tutor_id", teacherUser.id)
+      .eq("is_active", true)
+      .then(({ count }) => {
+        if (!cancelled) setHasAvailability((count ?? 0) > 0);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [teacherUser.id, calendarRefresh]);
+
+  const scrollToSection = (id: string) => {
+    setActiveTab("profile");
+    requestAnimationFrame(() =>
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
+    );
+  };
+
+  const hasBio = Boolean(tutorProfile?.bio?.trim());
 
   const profilePictureUrl =
     teacherUser.profile_picture && typeof teacherUser.profile_picture === "string"
@@ -210,6 +238,31 @@ export default function TeacherProfileClient({
               router.refresh();
             }}
           />
+
+          {hasAvailability !== null && (
+            <div className="px-5 pt-5 md:px-9 lg:px-0">
+              <TutorOnboardingCard
+                steps={[
+                  {
+                    id: "profile",
+                    done: hasBio && subjects.length > 0,
+                    onAction: () =>
+                      hasBio ? scrollToSection("tutor-subjects") : setIsEditModalOpen(true),
+                  },
+                  {
+                    id: "availability",
+                    done: hasAvailability,
+                    onAction: () => setActiveTab("availability"),
+                  },
+                  {
+                    id: "course",
+                    done: courses.length > 0,
+                    onAction: () => scrollToSection("tutor-courses"),
+                  },
+                ]}
+              />
+            </div>
+          )}
 
           {/* Tabs */}
           <div className="px-5 pt-5 md:px-9 lg:px-0">
@@ -347,17 +400,21 @@ export default function TeacherProfileClient({
                   <TutorReviewsSection />
                 </section>
 
-                <TutorSubjectsManager
-                  tutorId={teacherUser.id}
-                  initialSubjects={subjects}
-                  onSubjectsUpdated={setSubjects}
-                />
+                <div id="tutor-subjects" className="scroll-mt-6">
+                  <TutorSubjectsManager
+                    tutorId={teacherUser.id}
+                    initialSubjects={subjects}
+                    onSubjectsUpdated={setSubjects}
+                  />
+                </div>
 
-                <TutorCoursesManager
-                  tutorId={teacherUser.id}
-                  initialCourses={courses}
-                  onCoursesUpdated={setCourses}
-                />
+                <div id="tutor-courses" className="scroll-mt-6">
+                  <TutorCoursesManager
+                    tutorId={teacherUser.id}
+                    initialCourses={courses}
+                    onCoursesUpdated={setCourses}
+                  />
+                </div>
               </div>
             )}
 
