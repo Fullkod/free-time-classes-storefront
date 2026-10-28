@@ -42,6 +42,13 @@ const ROLE_OPTIONS: ReadonlyArray<{ value: AccountType; icon: LucideIcon }> = [
   { value: "both", icon: Users },
 ];
 
+// What each account type means, shown under the selector (G-signup-8).
+const ROLE_DESCRIPTION_KEY: Record<AccountType, string> = {
+  student: "hero.roleStudentDesc",
+  tutor: "hero.roleTutorDesc",
+  both: "hero.roleBothDesc",
+};
+
 export default function RegisterClient({ locale }: { locale: string }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -257,6 +264,7 @@ export default function RegisterClient({ locale }: { locale: string }) {
                 );
               })}
             </div>
+            <p className="mt-2 text-xs text-ft-ink-3">{t(ROLE_DESCRIPTION_KEY[accountType])}</p>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -344,6 +352,21 @@ export default function RegisterClient({ locale }: { locale: string }) {
               {registerError}
             </div>
           )}
+
+          <p className="text-xs leading-relaxed text-ft-ink-3">
+            {t.rich("consent", {
+              terms: (chunks) => (
+                <Link href={`/${locale}/terms-of-service`} className="font-semibold text-ft-ink underline-offset-2 hover:underline">
+                  {chunks}
+                </Link>
+              ),
+              privacy: (chunks) => (
+                <Link href={`/${locale}/privacy-policy`} className="font-semibold text-ft-ink underline-offset-2 hover:underline">
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
 
           <button
             type="submit"

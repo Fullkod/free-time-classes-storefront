@@ -85,7 +85,8 @@
     },
     "alreadyHaveAccount": "Already have an account?",
     "login": "Login here",
-    "register": "Register here"
+    "register": "Register here",
+    "consent": "By creating an account you accept the <terms>Terms of service</terms> and the <privacy>Privacy policy</privacy>."
   },
   "navbar": {
     "profile": "Profile",
