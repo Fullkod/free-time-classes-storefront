@@ -69,10 +69,6 @@ export default function SettingsClient({ locale }: { locale: string }) {
   });
   const [phone, setPhone] = useState("");
   const [isUpdatingPhone, setIsUpdatingPhone] = useState(false);
-  const [profileVisibility, setProfileVisibility] = useState<
-    "public" | "booking_only"
-  >("public");
-  const [isUpdatingPrivacy, setIsUpdatingPrivacy] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
   const [googleConnected, setGoogleConnected] = useState<boolean | null>(null);
@@ -88,16 +84,6 @@ export default function SettingsClient({ locale }: { locale: string }) {
       receive_whatsapp_notifications: !!user.receive_whatsapp_notifications,
     });
     setPhone(user.phone ?? "");
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const value = user.profile_visibility;
-    if (value === "public" || value === "booking_only") {
-      setProfileVisibility(value);
-    } else {
-      setProfileVisibility("public");
-    }
   }, [user]);
 
   useEffect(() => {
@@ -117,38 +103,6 @@ export default function SettingsClient({ locale }: { locale: string }) {
       toast.error(t("googleCalendarError"));
     }
   }, [searchParams, t]);
-
-  const handleUpdateProfileVisibility = async (
-    value: "public" | "booking_only"
-  ) => {
-    if (!user?.id) return;
-    setIsUpdatingPrivacy(true);
-    try {
-      const response = await fetch(`/api/settings/update-privacy`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile_visibility: value }),
-      });
-
-      const payload = (await response.json().catch(() => null)) as
-        | { error?: string; profile_visibility?: "public" | "booking_only" }
-        | null;
-
-      if (!response.ok) {
-        throw new Error(payload?.error || t("privacyUpdateError"));
-      }
-
-      if (payload?.profile_visibility === value) {
-        setProfileVisibility(value);
-      }
-
-      toast.success(t("privacyUpdated"));
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("privacyUpdateError"));
-    } finally {
-      setIsUpdatingPrivacy(false);
-    }
-  };
 
   const handleGoogleConnect = async () => {
     setGoogleLoading(true);
@@ -846,39 +800,11 @@ export default function SettingsClient({ locale }: { locale: string }) {
               <h2 className="text-[15px] font-semibold tracking-tight text-ft-ink">
                 {t("profileVisibility")}
               </h2>
+              {/* F081: students are only visible to tutors they booked or talk
+                  with (RLS, migration 039); tutor profiles are public. */}
               <p className="mt-1.5 text-[12px] text-ft-ink-3">
-                {t("profileVisibilityDescription")}
+                {t(user?.is_tutor ? "profileVisibilityTutor" : "profileVisibilityDescription")}
               </p>
-              <div className="mt-3 flex flex-col gap-2">
-                <button
-                  type="button"
-                  aria-pressed={profileVisibility === "public"}
-                  onClick={() => void handleUpdateProfileVisibility("public")}
-                  disabled={isUpdatingPrivacy}
-                  className={cn(
-                    "w-full rounded-ft border px-4 py-3 text-left text-[13px] font-medium transition-colors disabled:opacity-60",
-                    profileVisibility === "public"
-                      ? "border-ft-ink bg-ft-ink text-ft-paper"
-                      : "border-ft-line bg-ft-paper text-ft-ink hover:bg-ft-surface-1"
-                  )}
-                >
-                  {t("profileVisibilityPublic")}
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={profileVisibility === "booking_only"}
-                  onClick={() => void handleUpdateProfileVisibility("booking_only")}
-                  disabled={isUpdatingPrivacy}
-                  className={cn(
-                    "w-full rounded-ft border px-4 py-3 text-left text-[13px] font-medium transition-colors disabled:opacity-60",
-                    profileVisibility === "booking_only"
-                      ? "border-ft-ink bg-ft-ink text-ft-paper"
-                      : "border-ft-line bg-ft-paper text-ft-ink hover:bg-ft-surface-1"
-                  )}
-                >
-                  {t("profileVisibilityOnlyWithBooking")}
-                </button>
-              </div>
             </section>
 
             <section className="rounded-ft-lg border border-ft-line-soft bg-ft-paper p-5">
