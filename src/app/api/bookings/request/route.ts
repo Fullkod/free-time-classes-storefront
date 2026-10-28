@@ -6,6 +6,7 @@ import { findScheduleConflict } from "@/lib/bookings/scheduleConflict";
 import { MIN_LEAD_MINUTES } from "@/lib/bookings/leadTime";
 import { nowPlusMinutesAsLessonTimestamp } from "@/lib/datetime/lessonTime";
 import { requestCourseBooking } from "@/lib/bookings/requestCourseBooking";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -27,7 +28,8 @@ type Body = {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<Body>;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     if (body.courseId !== undefined) {
       return handleCourseBooking(body);
     }
@@ -162,7 +164,7 @@ export async function POST(request: NextRequest) {
         .eq("id", updatedLesson.id);
 
       return noStoreJson(
-        { error: bookingError?.message || "Failed to create booking." },
+        publicError(bookingError, "Failed to create booking."),
         { status: 400 }
       );
     }

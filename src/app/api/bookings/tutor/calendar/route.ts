@@ -3,6 +3,7 @@ import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js
 import { createClient } from "@/lib/supabase/server";
 import { BUSINESS_TIMEZONE } from "@/lib/datetime/lessonTime";
 import { epochToWallClock } from "@/lib/datetime/zonedTime";
+import { publicError } from "@/lib/api/http";
 
 // Booking/slot state changes on every request/response: never reuse a
 // browser-cached copy (it made confirmed requests reappear as pending).
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
 
     if (lessonsError) {
       return NextResponse.json(
-        { error: lessonsError.message || "Failed to load lessons." },
+        publicError(lessonsError, "Failed to load lessons."),
         { status: 400 }
       );
     }

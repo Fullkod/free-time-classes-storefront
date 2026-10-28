@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { publicError } from "@/lib/api/http";
 
 /**
  * Subject catalog for authenticated clients (e.g. student filters).
@@ -38,7 +39,7 @@ export async function GET() {
 
     if (error) {
       return NextResponse.json(
-        { error: error.message || "Failed to load subjects." },
+        publicError(error, "Failed to load subjects."),
         { status: 400 }
       );
     }

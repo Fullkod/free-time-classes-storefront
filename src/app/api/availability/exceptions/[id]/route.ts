@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { publicError } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -70,7 +71,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
 
     if (delErr) {
       return noStoreJson(
-        { error: delErr.message || "Could not delete exception." },
+        publicError(delErr, "Could not delete exception."),
         { status: 400 }
       );
     }

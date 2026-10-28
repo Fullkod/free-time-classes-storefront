@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { insertNotification } from "@/lib/notifications";
+import { publicError, readJson } from "@/lib/api/http";
 
 /**
  * Send an internal message.
@@ -33,7 +34,8 @@ type Body = { conversationId?: number | string; content?: string };
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Body;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const conversationId =
       typeof body.conversationId === "number"
         ? body.conversationId
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
     if (insertError || !message) {
       // RLS rejection (not a participant) surfaces here too.
       return noStoreJson(
-        { error: insertError?.message || "Failed to send message." },
+        publicError(insertError, "Failed to send message."),
         { status: 400 }
       );
     }

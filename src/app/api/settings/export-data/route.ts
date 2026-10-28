@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { publicError } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -40,7 +41,7 @@ export async function POST(_request: NextRequest) {
 
     if (userRowError) {
       return noStoreJson(
-        { error: userRowError.message || "Failed to load user data." },
+        publicError(userRowError, "Failed to load user data."),
         { status: 400 }
       );
     }

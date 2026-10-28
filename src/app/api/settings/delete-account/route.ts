@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { publicError } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -44,7 +45,7 @@ export async function POST() {
 
     if (deleteError) {
       return noStoreJson(
-        { error: deleteError.message || "Failed to delete account." },
+        publicError(deleteError, "Failed to delete account."),
         { status: 400 }
       );
     }

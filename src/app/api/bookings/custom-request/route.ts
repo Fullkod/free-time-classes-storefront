@@ -6,6 +6,7 @@ import { findScheduleConflict } from "@/lib/bookings/scheduleConflict";
 import { nowPlusMinutesAsLessonTimestamp } from "@/lib/datetime/lessonTime";
 import { MIN_LEAD_MINUTES } from "@/lib/bookings/leadTime";
 import { loadBookableCourse } from "@/lib/availability/loadOpenStartTimes";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -34,7 +35,8 @@ type Body = {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Body;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
 
     const tutorId = typeof body.tutorId === "string" ? body.tutorId.trim() : "";
     const courseId =
@@ -231,7 +233,7 @@ export async function POST(request: NextRequest) {
     if (bookingError || !booking) {
       console.error("[bookings/custom-request] insert failed:", bookingError);
       return noStoreJson(
-        { error: bookingError?.message || "Failed to create request." },
+        publicError(bookingError, "Failed to create request."),
         { status: 400 }
       );
     }

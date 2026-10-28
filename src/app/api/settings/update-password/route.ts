@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -16,7 +17,8 @@ type Body = {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<Body>;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const password = typeof body.password === "string" ? body.password.trim() : "";
 
     if (password.length < 6) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -50,7 +51,9 @@ export async function POST(request: NextRequest) {
       return noStoreJson({ error: "Forbidden." }, { status: 403 });
     }
 
-    const body = (await request.json()) as Partial<CreateBody>;
+    const body = await readJson<CreateBody>(request);
+
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const dayOfWeek = Number(body.day_of_week);
     const startTime = typeof body.start_time === "string" ? body.start_time.trim() : "";
     const endTime = typeof body.end_time === "string" ? body.end_time.trim() : "";
@@ -93,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     if (insertRuleError || !ruleRow) {
       return noStoreJson(
-        { error: insertRuleError?.message || "Could not save rule." },
+        publicError(insertRuleError, "Could not save rule."),
         { status: 400 }
       );
     }

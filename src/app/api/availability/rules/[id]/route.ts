@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { publicError } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -209,7 +210,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
 
     if (delRuleErr) {
       return noStoreJson(
-        { error: delRuleErr.message || "Could not delete rule." },
+        publicError(delRuleErr, "Could not delete rule."),
         { status: 400 }
       );
     }

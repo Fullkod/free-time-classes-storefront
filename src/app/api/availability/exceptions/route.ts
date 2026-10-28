@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { BUSINESS_TIMEZONE } from "@/lib/datetime/lessonTime";
 import { epochToWallClock, wallClockToEpoch } from "@/lib/datetime/zonedTime";
 import { loadTutorTimeZone } from "@/lib/availability/tutorTimeZone";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -131,7 +132,9 @@ export async function POST(request: NextRequest) {
       return noStoreJson({ error: "Forbidden." }, { status: 403 });
     }
 
-    const body = (await request.json()) as Partial<Body>;
+    const body = await readJson<Body>(request);
+
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!supabaseUrl || !serviceRoleKey) {
@@ -176,7 +179,7 @@ export async function POST(request: NextRequest) {
 
       if (insErr || !inserted) {
         return noStoreJson(
-          { error: insErr?.message || "Could not save exception." },
+          publicError(insErr, "Could not save exception."),
           { status: 400 }
         );
       }
@@ -349,7 +352,7 @@ export async function POST(request: NextRequest) {
 
       if (insErr || !inserted) {
         return noStoreJson(
-          { error: insErr?.message || "Could not save exception." },
+          publicError(insErr, "Could not save exception."),
           { status: 400 }
         );
       }

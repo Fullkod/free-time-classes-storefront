@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -25,7 +26,8 @@ export async function POST(
   request: NextRequest
 ) {
   try {
-    const body = (await request.json()) as Partial<Body>;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const name = (typeof body.name === "string" ? body.name : "")
       .trim()
       .replace(/\s+/g, " ");

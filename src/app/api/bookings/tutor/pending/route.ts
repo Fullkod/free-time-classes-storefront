@@ -6,6 +6,7 @@ import {
   nowAsLessonTimestamp,
   nowPlusMinutesAsLessonTimestamp,
 } from "@/lib/datetime/lessonTime";
+import { publicError } from "@/lib/api/http";
 
 // Booking/slot state changes on every request/response: never reuse a
 // browser-cached copy (it made confirmed requests reappear as pending).
@@ -74,7 +75,7 @@ export async function GET() {
 
     if (bookingsError) {
       return NextResponse.json(
-        { error: bookingsError.message || "Failed to load pending bookings." },
+        publicError(bookingsError, "Failed to load pending bookings."),
         { status: 400 }
       );
     }

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { insertNotification } from "@/lib/notifications";
 import { isValidMeetLink } from "@/lib/bookings/meetLink";
 import { isLessonInPast } from "@/lib/datetime/lessonTime";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -25,7 +26,9 @@ export async function PATCH(
       return noStoreJson({ error: "Invalid lesson id." }, { status: 400 });
     }
 
-    const body = (await request.json()) as { meetLink?: string };
+    const body = await readJson<{ meetLink?: string }>(request);
+
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const meetLink = typeof body.meetLink === "string" ? body.meetLink.trim() : "";
     if (meetLink && !isValidMeetLink(meetLink)) {
       return noStoreJson(
@@ -92,7 +95,7 @@ export async function PATCH(
 
     if (updateError) {
       return noStoreJson(
-        { error: updateError.message || "Failed to update meet link." },
+        publicError(updateError, "Failed to update meet link."),
         { status: 400 }
       );
     }

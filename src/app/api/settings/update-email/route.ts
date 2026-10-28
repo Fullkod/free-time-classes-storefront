@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -21,7 +22,8 @@ function isValidEmail(email: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<Body>;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
 
     if (!isValidEmail(email)) {
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
 
       if (publicUserError) {
         return noStoreJson(
-          { error: publicUserError.message || "Failed to sync public user email." },
+          publicError(publicUserError, "Failed to sync public user email."),
           { status: 400 }
         );
       }

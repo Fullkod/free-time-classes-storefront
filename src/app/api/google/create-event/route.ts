@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createMeetEvent } from "@/lib/google-calendar";
+import { readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -18,7 +19,8 @@ type Body = {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<Body>;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const lessonId = Number(body.lessonId);
 
     if (!Number.isInteger(lessonId) || lessonId <= 0) {

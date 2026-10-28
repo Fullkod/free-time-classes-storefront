@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -34,7 +35,7 @@ export async function GET() {
       .limit(50);
 
     if (error) {
-      return noStoreJson({ error: error.message }, { status: 500 });
+      return noStoreJson(publicError(error, "Could not update notifications."), { status: 500 });
     }
 
     return noStoreJson({ notifications: data ?? [] });
@@ -61,7 +62,8 @@ export async function PATCH(request: NextRequest) {
       return noStoreJson({ error: "Unauthorized." }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await readJson<{ all: boolean; notificationId: number }>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
 
     if (body.all === true) {
       const { error } = await supabase
@@ -71,7 +73,7 @@ export async function PATCH(request: NextRequest) {
         .eq("is_read", false);
 
       if (error) {
-        return noStoreJson({ error: error.message }, { status: 500 });
+        return noStoreJson(publicError(error, "Could not update notifications."), { status: 500 });
       }
       return noStoreJson({ ok: true });
     }
@@ -88,7 +90,7 @@ export async function PATCH(request: NextRequest) {
       .eq("user_id", user.id);
 
     if (error) {
-      return noStoreJson({ error: error.message }, { status: 500 });
+      return noStoreJson(publicError(error, "Could not update notifications."), { status: 500 });
     }
 
     return noStoreJson({ ok: true });

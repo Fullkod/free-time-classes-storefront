@@ -8,6 +8,7 @@ import {
   STUDENT_CANCEL_HOURS,
   canStudentCancelConfirmed,
 } from "@/lib/bookings/cancellationPolicy";
+import { publicError, readJson } from "@/lib/api/http";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -24,7 +25,8 @@ type Body = {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<Body>;
+    const body = await readJson<Body>(request);
+    if (!body) return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
     const bookingId =
       typeof body.bookingId === "number" ? body.bookingId : Number(body.bookingId);
 
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
 
     if (cancelError) {
       return noStoreJson(
-        { error: cancelError.message || "Failed to cancel booking." },
+        publicError(cancelError, "Failed to cancel booking."),
         { status: 400 }
       );
     }
