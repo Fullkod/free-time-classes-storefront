@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ConfirmActionDialog from "@/components/common/ConfirmActionDialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { FT_BTN_PRIMARY, FT_FIELD } from "@/components/teacher/ftStyles";
@@ -16,7 +15,6 @@ import {
 } from "@/lib/supabase/queries/tutors";
 import type { Subject } from "@/types/subject";
 import { useEffect, useMemo, useState } from "react";
-import { Trash2 } from "lucide-react";
 import { requestCatalogRevalidation } from "@/lib/catalog/revalidate";
 
 interface TutorSubjectsManagerProps {
@@ -40,7 +38,6 @@ export default function TutorSubjectsManager({
   const [newSubjectName, setNewSubjectName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null);
 
   useEffect(() => {
     setSelectedSubjectIds(new Set(initialSubjects.map((subject) => subject.id)));
@@ -158,54 +155,6 @@ export default function TutorSubjectsManager({
     }
   };
 
-  const handleDeleteSubject = async (subject: Subject) => {
-    if (isSaving) {
-      return;
-    }
-    setSubjectToDelete(subject);
-  };
-
-  const confirmDeleteSubject = async () => {
-    if (!subjectToDelete || isSaving) {
-      return;
-    }
-
-    try {
-      setIsSaving(true);
-      setError(null);
-      setSuccessMessage(null);
-
-      const res = await fetch(`/api/subjects/delete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subjectId: subjectToDelete.id }),
-      });
-
-      const json = (await res.json()) as { error?: string };
-      if (!res.ok) {
-        throw new Error(json.error || t("deleteError"));
-      }
-
-      const [updatedCatalog, updatedSelectedSubjects] = await Promise.all([
-        getSubjects({ fresh: true }),
-        getTutorSubjectDetails(tutorId),
-      ]);
-
-      setAllSubjects(updatedCatalog);
-      setSelectedSubjectIds(
-        new Set(updatedSelectedSubjects.map((updatedSubject) => updatedSubject.id))
-      );
-      onSubjectsUpdated(updatedSelectedSubjects);
-      setSuccessMessage(t("deleted"));
-      setSubjectToDelete(null);
-    } catch (err) {
-      console.error("Error deleting subject:", err);
-      setError(err instanceof Error ? err.message : t("deleteError"));
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <Card className="w-full rounded-ft-2xl border-ft-line bg-ft-paper shadow-none">
       <CardHeader>
@@ -234,7 +183,7 @@ export default function TutorSubjectsManager({
                     type="button"
                     variant="ghost"
                     className={cn(
-                      "h-auto rounded-none border-r border-ft-line px-3 py-2 shadow-none",
+                      "h-auto rounded-none px-3 py-2 shadow-none",
                       isSelected
                         ? "bg-gradient-to-br from-ft-accent to-ft-accent-deep text-ft-paper hover:opacity-90"
                         : "bg-transparent text-ft-ink-2 hover:bg-ft-surface-2"
@@ -245,20 +194,6 @@ export default function TutorSubjectsManager({
                     }}
                   >
                     {subject.name}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 rounded-none text-ft-ink-3 hover:bg-red-50 hover:text-red-600"
-                    disabled={isSaving}
-                    title={t("deleteAction")}
-                    aria-label={t("deleteAction")}
-                    onClick={() => {
-                      void handleDeleteSubject(subject);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               );
@@ -312,27 +247,6 @@ export default function TutorSubjectsManager({
         {successMessage && <p className="text-sm text-emerald-700">{successMessage}</p>}
         {error && <p className="text-sm text-red-600">{error}</p>}
       </CardContent>
-
-      <ConfirmActionDialog
-        open={!!subjectToDelete}
-        onOpenChange={(open) => {
-          if (!open && !isSaving) {
-            setSubjectToDelete(null);
-          }
-        }}
-        title={t("deleteDialogTitle")}
-        description={
-          subjectToDelete ? t("deleteConfirm", { subject: subjectToDelete.name }) : ""
-        }
-        cancelLabel={t("deleteDialogCancel")}
-        confirmLabel={isSaving ? t("deleting") : t("deleteDialogConfirm")}
-        loading={isSaving}
-        onCancel={() => setSubjectToDelete(null)}
-        onConfirm={() => {
-          void confirmDeleteSubject();
-        }}
-        contentClassName="sm:max-w-[480px]"
-      />
     </Card>
   );
 }

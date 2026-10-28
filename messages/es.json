@@ -665,15 +665,7 @@
       "emptyNameError": "Escribe un nombre para la materia.",
       "duplicateNameError": "Esa materia ya existe.",
       "loadCatalogError": "No se pudo cargar el catálogo de materias.",
-      "updateError": "No se pudo actualizar tus materias.",
-      "deleteAction": "Eliminar materia",
-      "deleteConfirm": "¿Seguro que quieres eliminar \"{subject}\" del catálogo general?",
-      "deleteDialogTitle": "Eliminar materia",
-      "deleteDialogCancel": "Cancelar",
-      "deleteDialogConfirm": "Eliminar",
-      "deleting": "Eliminando...",
-      "deleteError": "No se pudo eliminar la materia.",
-      "deleted": "Materia eliminada correctamente."
+      "updateError": "No se pudo actualizar tus materias."
     },
     "cv": {
       "title": "Perfil profesional",

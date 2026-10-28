@@ -665,15 +665,7 @@
       "emptyNameError": "Please enter a subject name.",
       "duplicateNameError": "That subject already exists.",
       "loadCatalogError": "Failed to load subjects catalog.",
-      "updateError": "Failed to update your subjects.",
-      "deleteAction": "Delete subject",
-      "deleteConfirm": "Are you sure you want to delete \"{subject}\" from the global catalog?",
-      "deleteDialogTitle": "Delete subject",
-      "deleteDialogCancel": "Cancel",
-      "deleteDialogConfirm": "Delete",
-      "deleting": "Deleting...",
-      "deleteError": "Failed to delete subject.",
-      "deleted": "Subject deleted successfully."
+      "updateError": "Failed to update your subjects."
     },
     "cv": {
       "title": "Professional background",
