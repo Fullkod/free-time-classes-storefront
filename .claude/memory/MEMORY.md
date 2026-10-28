@@ -24,3 +24,4 @@
 - [Gotchas de OpenWA](reference/openwa-gotchas.md) — 10 errores tipicos (@lid, UUID de sesion, idempotencia...)
 - [Verificacion local](reference/local-verification.md) — middleware en src/, server paralelo :3001, sesion de prueba sin navegador, SQL via `supabase db query` sin el token del entorno
 - [Cache y rendimiento](reference/caching-performance.md) — ISR (generateStaticParams vacio), getClaims, i18n por ruta, SIGNED_IN duplicado, limpieza de Storage
+- [Correo de Fullkod](reference/correo-fullkod-resend.md) — @fullkod.com va por Resend (contact@, support@), sin reenvío; cada proyecto decide cómo avisar de sus formularios
