@@ -25,10 +25,13 @@ export async function generateMetadata({
 
 export default async function MessagesPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ c?: string }>;
 }) {
   const { locale } = await params;
+  const conversationId = Number((await searchParams).c);
   const supabase = await createClient();
   const user = await getSessionUser(supabase);
 
@@ -36,5 +39,9 @@ export default async function MessagesPage({
     redirect(`/${locale}/login`);
   }
 
-  return <MessagesClient />;
+  return (
+    <MessagesClient
+      initialConversationId={Number.isInteger(conversationId) && conversationId > 0 ? conversationId : null}
+    />
+  );
 }

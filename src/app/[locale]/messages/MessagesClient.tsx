@@ -5,7 +5,11 @@ import { StudentSidebarNav } from "@/components/ds/StudentSidebarNav";
 import { useAuth } from "@/context/UserContext";
 import { useTranslations } from "@/i18n/translations";
 
-export default function MessagesClient() {
+export default function MessagesClient({
+  initialConversationId,
+}: {
+  initialConversationId: number | null;
+}) {
   const t = useTranslations("messagesPage");
   const { user } = useAuth();
 
@@ -23,7 +27,10 @@ export default function MessagesClient() {
           </header>
 
           <div className="px-5 pb-6 md:px-9 lg:px-0">
-            <InternalMessagingPanel namespace="messagesPage" />
+            <InternalMessagingPanel
+              namespace="messagesPage"
+              initialConversationId={initialConversationId}
+            />
           </div>
         </div>
       </div>

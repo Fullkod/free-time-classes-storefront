@@ -39,10 +39,13 @@ function dateFromSupabaseTimestamptz(value: string): Date {
 
 type InternalMessagingPanelProps = {
   namespace: "studentProfile" | "teacherProfile" | "messagesPage";
+  /** Conversation to open first (from a message notification, F074). */
+  initialConversationId?: number | null;
 };
 
 export default function InternalMessagingPanel({
   namespace,
+  initialConversationId = null,
 }: InternalMessagingPanelProps) {
   const { user, isLoading: authLoading } = useAuth();
   const locale = useLocale();
@@ -171,7 +174,11 @@ export default function InternalMessagingPanel({
           (a.username || "").localeCompare(b.username || "")
         );
         setContacts(merged);
-        if (list.length > 0) {
+        const linked = list.find((c) => c.id === initialConversationId);
+        if (linked) {
+          setSelectedConversationId(linked.id);
+          setShowMobileChat(true);
+        } else if (list.length > 0) {
           setSelectedConversationId(list[0].id);
         }
       } catch (e) {
@@ -189,7 +196,7 @@ export default function InternalMessagingPanel({
     return () => {
       cancelled = true;
     };
-  }, [authLoading, getPendingContacts, user?.id]);
+  }, [authLoading, getPendingContacts, user?.id, initialConversationId]);
 
   useEffect(() => {
     let cancelled = false;

@@ -78,8 +78,12 @@ function getNotificationHref(n: Notification, locale: string): string {
     case "booking_cancelled":
     case "booking_expired":
       return `/${locale}/bookings`;
-    case "message_received":
-      return `/${locale}/messages`;
+    case "message_received": {
+      const conversationId = Number(n.data?.conversation_id);
+      return Number.isInteger(conversationId) && conversationId > 0
+        ? `/${locale}/messages?c=${conversationId}`
+        : `/${locale}/messages`;
+    }
     default:
       return `/${locale}/notifications`;
   }
