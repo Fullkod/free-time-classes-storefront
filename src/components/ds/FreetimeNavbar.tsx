@@ -19,7 +19,7 @@ function stripLocale(pathname: string): string {
 export function FreetimeNavbar() {
   const locale = useLocale();
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { unreadCount } = useNotificationsContext();
   const t = useTranslations("navbar");
   const suffix = stripLocale(pathname);
@@ -117,6 +117,9 @@ export function FreetimeNavbar() {
                 {user.username}
               </span>
             </Link>
+          ) : isLoading ? (
+            // Session still resolving: no login/register flash for signed-in users (G-sess-3).
+            <span aria-hidden className="h-9 w-32 animate-pulse rounded-full bg-ft-surface-1" />
           ) : (
             <>
               <Link
