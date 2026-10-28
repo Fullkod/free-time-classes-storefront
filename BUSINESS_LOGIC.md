@@ -87,7 +87,8 @@ Uso principal en movil (BottomNav, app nativa via Capacitor) y desktop para prof
   telefono y consentimiento explicito (opt-in en Ajustes, desactivado por defecto, con fecha de consentimiento).
 - **Caducidad de pendientes:** una solicitud sin respuesta caduca a las 48 h o 2 h antes de la clase (lo que llegue
   antes); se libera la hora y se avisa al estudiante.
-- **Resenas:** una por clase completada; el rating y el total de resenas del profesor se recalculan por trigger.
+- **Resenas:** una por clase completada, hasta 30 dias despues de la clase (boton «Valorar» en Mis Reservas; RLS en la
+  045); el rating y el total de resenas del profesor se recalculan por trigger. Los estudiantes guardan profesores con el corazon.
 - **Privacidad:** el usuario puede exportar sus datos y borrar su cuenta (GDPR).
 
 ## 6. Modelo de Ingresos
