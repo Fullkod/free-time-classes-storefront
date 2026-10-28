@@ -1,6 +1,6 @@
 # PRP-002: Agenda del tutor en su zona horaria
 
-> **Estado**: APROBADO (2026-10-28)
+> **Estado**: EN CURSO — fases 1-4 hechas (2026-10-28); faltan 4b y 5
 > **Fecha**: 2026-10-28
 > **Proyecto**: Free Time Classes
 > **Origen**: FRE0007, decision 11 (2026-10-28): «agenda del tutor en SU zona horaria ya (`tutor_profiles.timezone`, con migracion)». Continua PRP-001 (`.claude/PRPs/prp-course-booking-unit.md`) y las decisiones F047/F051 (2026-10-20).
@@ -136,6 +136,14 @@ create trigger tutor_profiles_validate_timezone
 
 > Solo fases. Las subtareas se generan al entrar en cada fase (bucle agentico).
 
+### Progreso (2026-10-28)
+- [x] Fase 1 — `200da8d` (046 aplicada en prod: 4 tutores en Madrid, trigger de validacion)
+- [x] Fase 2 — `200da8d` (motor por instantes; 300 agendas aleatorias identicas al motor anterior en Madrid; casos La Habana/Mexico/DST/medianoche OK con TZ=UTC; 8 semanas densas en ~114 ms)
+- [x] Fase 3 — `ec9fa5e` (PATCH zona, excepciones y calendario API en zona del tutor)
+- [x] Fase 4 — `737cb7b` (UI; E2E con el tutor de prueba y navegador en America/Havana: cambio de zona por UI, zona invalida 400, extra pasado 400, extra 10-12 Havana → open-times 15:00/15:30/16:00 Madrid, indicador «ahora» correcto; datos QA borrados y zona restaurada a Madrid)
+- [ ] Fase 4b — avisos al tutor en su zona (`src/lib/whatsapp/messages.ts` formatea en Madrid; los textos de `insertNotification` para el tutor: `booking_request`, `booking_custom_request`, `booking_cancelled` al tutor)
+- [ ] Fase 5 — validacion final (build, E2E estudiante en Madrid/Mexico reservando a tutor en La Habana, docs). `TutorCoursesManager` no tiene paso de agenda propio (solo una pista tras publicar): no necesita campo de zona.
+
 ### Fase 1: Base de datos (migracion 046)
 **Objetivo**: zona fijada para los tutores con agenda, validacion de zonas en BD, semantica documentada en comentarios.
 **Validacion**: prueba en seco (`begin … rollback`) con zona valida, invalida (falla) y `null`; OK del usuario antes de aplicar; `supabase db query` confirma trigger y valores.
@@ -178,6 +186,15 @@ create trigger tutor_profiles_validate_timezone
 ## Aprendizajes (Self-Annealing)
 
 > Crece con cada error encontrado durante la implementacion.
+
+### 2026-10-28: FullCalendar entra en bucle con `now` inline
+- **Error**: «Maximum update depth exceeded» al abrir Disponibilidad: pasar `now={() => ...}` crea una funcion nueva en cada render, FullCalendar resetea la vista, dispara `datesSet`, cambia el estado y vuelve a renderizar.
+- **Fix**: `const calendarNow = useCallback(() => new Date(`${epochToWallClock(Date.now(), tz)}Z`), [tz])`.
+- **Aplicar en**: cualquier prop funcion/objeto de FullCalendar (memoizar).
+
+### 2026-10-28: `tutor_profiles` no tiene `updated_at`
+- **Error**: el PATCH de zona escribia `updated_at` (columna inexistente).
+- **Fix**: solo `{ timezone }`; comprobar columnas con `information_schema` antes de escribir.
 
 ---
 

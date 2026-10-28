@@ -29,6 +29,11 @@ PowerShell `Get-NetTCPConnection -LocalPort 3005 -State Listen | Stop-Process`. 
 `browser.newContext({ timezoneId })`. Scripts `tsx` que importan codigo del proyecto deben estar en la raiz del repo
 (temporal, borrarlo despues): desde el scratchpad no resuelven `@/` ni los paquetes.
 
+**Dev server tras borrar una ruta:** Turbopack + Tailwind siguen buscando el archivo borrado (`ENOENT ... route.ts`
+y 500 en todas las paginas): parar el proceso del puerto 3000 y relanzar `npm run dev`; borrar tambien
+`.next/types/app/api/<ruta>` si `tsc` se queja de tipos de una ruta que ya no existe. Para scripts con regex o `\r\n`,
+escribirlos con la herramienta Write, no con heredoc + Python (el escape se pierde y deja un CR literal).
+
 **Lecturas de BD:** PostgREST con la service role solo para lecturas (`limit=0` para comprobar columnas). Para
 SQL de catalogo y DDL: `env -u SUPABASE_ACCESS_TOKEN supabase db query --linked --project-ref nqetxsifeulhfkwjdsbp "<sql>"`
 (o `-f archivo.sql`). Usa el `supabase login` del usuario (cuenta duena del proyecto); hay que quitar

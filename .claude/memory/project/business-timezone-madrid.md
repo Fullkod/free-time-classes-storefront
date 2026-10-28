@@ -19,5 +19,10 @@ en la zona del navegador del usuario. Usar `src/lib/datetime/viewerTime.ts`: `le
 `dayKeyInZone` y el hook `useViewerTimeZone()` (devuelve Madrid en SSR/hidratacion y la zona del navegador despues,
 asi el HTML del servidor coincide). Nunca `new Date(scheduled_date_time)` a pelo: el navegador lo lee como hora local.
 Entradas: `datetime-local` del estudiante (otra hora) se convierte a Madrid con `dateAsLessonTimestamp(new Date(valor))`.
-La agenda del tutor (franjas/bloqueos y su FullCalendar) sigue en hora de Madrid con etiqueta: pasarla a la zona del
-tutor exige guardar su zona (las reglas semanales cambian con el horario de verano de cada pais) — pendiente.
+**Agenda del tutor en SU zona (PRP-002, 2026-10-28):** `tutor_availability` y `availability_exceptions` son hora de
+pared en `tutor_profiles.timezone` (null = Madrid; migracion 046 la valida con trigger). La conversion vive en
+`src/lib/datetime/zonedTime.ts` (`wallClockToEpoch`/`epochToWallClock`/`resolveTimeZone`, solo `Intl`; hora inexistente
+= null, ambigua = primera ocurrencia) y en el motor `computeOpenStartTimes`, que expande por fecha del tutor (±1 dia) y
+devuelve Madrid. `lessons` sigue en Madrid. El FullCalendar de «Mi agenda» va con `timeZone="UTC"` alimentado con hora
+del tutor (los Date que devuelve llevan la hora del tutor en sus campos UTC) y `now` memoizado. Las demas vistas siguen
+con `useViewerTimeZone` (navegador).

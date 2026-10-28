@@ -70,7 +70,7 @@ src/
 ├── types/                 # Tipos del dominio
 └── i18n/
 messages/es.json, messages/en.json   # TODOS los textos de UI
-supabase/migrations/NNN_descripcion.sql   # Migraciones numeradas (siguiente: 046)
+supabase/migrations/NNN_descripcion.sql   # Migraciones numeradas (siguiente: 047)
 src/middleware.ts          # next-intl + sesion Supabase + proteccion por rol (is_student / is_tutor)
 ```
 
@@ -78,7 +78,7 @@ src/middleware.ts          # next-intl + sesion Supabase + proteccion por rol (i
 
 ## Reglas criticas del proyecto
 
-- **Hora de negocio = Europe/Madrid.** `lessons.scheduled_date_time` es wall-clock de Madrid sin offset. Nunca compares con `new Date().toISOString()` ni hora local del servidor: usa `src/lib/datetime/lessonTime.ts`. Para MOSTRAR horas al usuario usa `src/lib/datetime/viewerTime.ts` (zona del navegador); nunca `new Date(scheduled_date_time)`. Detalle: `.claude/memory/project/business-timezone-madrid.md`.
+- **Hora de negocio = Europe/Madrid.** `lessons.scheduled_date_time` es wall-clock de Madrid sin offset. Nunca compares con `new Date().toISOString()` ni hora local del servidor: usa `src/lib/datetime/lessonTime.ts`. Para MOSTRAR horas al usuario usa `src/lib/datetime/viewerTime.ts` (zona del navegador); nunca `new Date(scheduled_date_time)`. La agenda del tutor (franjas y excepciones) va en SU zona (`tutor_profiles.timezone`, `zonedTime.ts`). Detalle: `.claude/memory/project/business-timezone-madrid.md`.
 - **Radios FreeTime:** solo `rounded-ft-*`, `rounded-full` o `rounded-[Npx]`. NUNCA `rounded-md/lg/xl/2xl` (la config legacy los infla a 24–64px). Detalle: `.claude/memory/feedback/freetime-radius-scale.md`.
 - **i18n:** ningun string de UI hardcodeado; anade la clave en `messages/es.json` Y `messages/en.json`. Al navegador solo viajan los namespaces de la shell y los de cada ruta (`src/i18n/clientMessages.ts`, F094): si un componente cliente usa un namespace nuevo, anadelo ahi y pasa `npm run check:i18n-scopes`.
 - **Capacitor:** API en `src/app/api/` (nunca bajo `[locale]`), secretos solo en route handlers, cliente browser de Supabase en componentes `'use client'`, assets en `/public`. Nunca `output: 'standalone'` ni `output: 'export'`.

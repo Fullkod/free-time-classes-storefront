@@ -50,4 +50,7 @@ de la clase (F014); resenas solo de clases completed, una por clase, 30 dias (F0
 tutores crean, quitar solo desvincula, borrado global solo admin (F056); onboarding tutor = tarjeta checklist de 3
 pasos (G-signup-6); «Explorar» -> /courses (F096); Supabase sigue gratis + keepalive en Vercel Cron (G-prod-1);
 funciones Vercel a pdx1 (G-prod-4); agenda del tutor en SU zona horaria ya (`tutor_profiles.timezone`, con migracion).
+Matices posteriores (28/10): F097 desactivo WhatsApp a TODOS los existentes (044, cada uno lo reactiva en Ajustes);
+F081 aplica solo a estudiantes y ya lo cumplia la RLS (039), asi que se quito el selector; reseñas: RLS en la 045.
+Agenda en la zona del tutor: PRP-002 (`.claude/PRPs/prp-tutor-agenda-timezone.md`), su estado de fases vive en el PRP.
 Decisiones nuevas que surjan: preguntar, no inventar.
