@@ -47,7 +47,7 @@ export function FreetimeBottomNav() {
       case "home":
         return user ? `${base}/dashboard` : `${base}/`;
       case "explore":
-        return `${base}/tutors`;
+        return `${base}/courses`;
       case "classes":
         return `${base}/bookings`;
       case "messages":

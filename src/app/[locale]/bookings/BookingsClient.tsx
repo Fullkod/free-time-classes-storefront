@@ -545,7 +545,7 @@ export default function BookingsClient({ locale }: { locale: string }) {
                     <div className="text-[11px] font-bold uppercase tracking-[0.06em] text-ft-accent-deep">
                       {dateTime ? `${dateTime.date} · ${dateTime.time}` : t("dateUnknown")}
                     </div>
-                    {dateTime?.countdown && (
+                    {tab === "upcoming" && dateTime?.countdown && (
                       <div className="text-[11px] text-ft-ink-3">{dateTime.countdown}</div>
                     )}
                   </div>

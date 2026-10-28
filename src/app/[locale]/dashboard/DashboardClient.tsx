@@ -279,10 +279,10 @@ export default function DashboardClient({
       </p>
       <button
         type="button"
-        onClick={() => router.push(`/${locale}/tutors`)}
+        onClick={() => router.push(`/${locale}/courses`)}
         className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-ft-ink px-5 py-2.5 text-[13px] font-semibold text-ft-paper transition-colors hover:bg-[#2a241b]"
       >
-        {t("findTutor")}
+        {t("exploreCourses")}
         <ArrowRight width={13} height={13} />
       </button>
     </article>

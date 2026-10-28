@@ -341,6 +341,31 @@ export default function InternalMessagingPanel({
     };
   }, [user?.id]);
 
+  // On mobile the open chat gets its own history entry, so the browser or
+  // Android back button returns to the list instead of leaving the page.
+  const openMobileChat = () => {
+    if (!showMobileChatRef.current && !window.matchMedia("(min-width: 768px)").matches) {
+      window.history.pushState({ ...window.history.state, ftMobileChat: true }, "");
+    }
+    setShowMobileChat(true);
+  };
+
+  const closeMobileChat = () => {
+    if (window.history.state?.ftMobileChat) {
+      window.history.back();
+    } else {
+      setShowMobileChat(false);
+    }
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      if (!window.history.state?.ftMobileChat) setShowMobileChat(false);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   const startConversation = async (contactId: string) => {
     if (!user?.id) return;
     try {
@@ -349,7 +374,7 @@ export default function InternalMessagingPanel({
       const refreshed = await getUserConversations(user.id);
       setConversations(refreshed);
       setSelectedConversationId(conversationId);
-      setShowMobileChat(true);
+      openMobileChat();
     } catch (e) {
       console.error("Error creating direct conversation:", e);
       toast.error(tm("createConversationError"));
@@ -396,7 +421,7 @@ export default function InternalMessagingPanel({
 
   const openConversation = (conversationId: number) => {
     setSelectedConversationId(conversationId);
-    setShowMobileChat(true);
+    openMobileChat();
   };
 
   if (authLoading || loading) {
@@ -571,7 +596,7 @@ export default function InternalMessagingPanel({
               <button
                 type="button"
                 className="grid h-9 w-9 place-items-center rounded-full border border-ft-line bg-ft-paper text-ft-ink hover:bg-ft-surface-1 md:hidden"
-                onClick={() => setShowMobileChat(false)}
+                onClick={closeMobileChat}
               >
                 <ArrowLeft className="h-4 w-4" />
               </button>

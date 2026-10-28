@@ -42,6 +42,12 @@ export default function LoginClient({ locale }: { locale: string }) {
   const tAuth = useTranslations("auth");
   const [shouldRedirectAfterLogin, setShouldRedirectAfterLogin] =
     useState(false);
+  // Until React hydrates, a submit would be a native GET that reloads the page.
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   useEffect(() => {
     if (!shouldRedirectAfterLogin) return;
@@ -243,7 +249,7 @@ export default function LoginClient({ locale }: { locale: string }) {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isHydrated}
             className="mt-3 w-full rounded-ft-md bg-ft-ink px-4 py-4 text-sm font-semibold text-ft-paper transition-colors hover:bg-[#2a241b] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? t("loading") : t("login")}
