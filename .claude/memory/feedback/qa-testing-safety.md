@@ -18,3 +18,11 @@ profesor real le llega al movil.
 - El repo es publico (decision 2026-10-19, no se va a privatizar): nunca escribir credenciales, ni detalles
   explotables de vulnerabilidades, en archivos versionados (codigo, memoria, PRPs, commits). Los informes de
   auditoria van a `docs/audits/` (local) y a Tasknic.
+
+**Pruebas con escritura en produccion (2026-10-28, con OK explicito del usuario):** para probar el flujo con Google
+Meet hizo falta una cuenta de profesor con Google conectado. El usuario autorizo usar la de Claudia (miembro del
+equipo). Se entro sin su contrasena: `auth.admin.generateLink({type:"magiclink"})` + `verifyOtp({token_hash})` en un
+script local y la cookie de `@supabase/ssr` construida a mano (no cambia nada de la cuenta ni envia correo). Antes de
+escribir, comprobar `users.receive_whatsapp_notifications` de las cuentas implicadas (si esta activo, la prueba le
+llega al movil). Al confirmar, Google manda invitacion y cancelacion por correo a los asistentes (`sendUpdates=all`):
+no se puede deshacer, avisar. Usar una cuenta real ajena SIEMPRE requiere un OK nuevo del usuario en esa sesion.

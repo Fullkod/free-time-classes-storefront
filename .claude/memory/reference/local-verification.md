@@ -45,3 +45,10 @@ verificacion con `npx next dev --turbo -p 3002`. Para probar flujos con WhatsApp
 SQL de catalogo y DDL: `env -u SUPABASE_ACCESS_TOKEN supabase db query --linked --project-ref nqetxsifeulhfkwjdsbp "<sql>"`
 (o `-f archivo.sql`). Usa el `supabase login` del usuario (cuenta duena del proyecto); hay que quitar
 `SUPABASE_ACCESS_TOKEN` porque el entorno de la maquina inyecta uno de OTRA cuenta que tiene prioridad y da 403.
+
+**Pruebas contra produccion:** la URL publica es `https://free-time-classes.vercel.app` (las URL de cada deploy piden
+SSO de Vercel; el proyecto no esta en la cuenta del MCP de Vercel). Para saber cuando un commit ya esta en vivo:
+`gh api repos/{owner}/{repo}/deployments?sha=<sha>` y su `/statuses` (`state=success`). Vercel consume el `s-maxage`
+en el CDN y al navegador le llega solo `public` (no es un fallo); la cache se ve en `x-vercel-cache: HIT`. Probar
+tambien con `timezoneId: "America/Havana"`: los errores de hidratacion (React #418) solo salen fuera de la hora de
+Madrid, porque el servidor corre en UTC.

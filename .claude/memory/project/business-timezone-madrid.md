@@ -27,3 +27,8 @@ devuelve Madrid. `lessons` sigue en Madrid. El FullCalendar de «Mi agenda» va 
 del tutor (los Date que devuelve llevan la hora del tutor en sus campos UTC) y `now` memoizado. Las demas vistas siguen
 con `useViewerTimeZone` (navegador). WhatsApp: `buildWhatsAppMessage` pone la hora en Madrid sin etiqueta para el estudiante y en la
 zona del tutor con «(hora de X)» para los tipos dirigidos al tutor (`TUTOR_RECIPIENT_TYPES` en `notifications.ts`).
+
+**Hidratacion (2026-10-28):** nada que dependa de la hora actual (saludo, «hoy», cuenta atras) puede calcularse con
+`new Date().getHours()` en un componente que se renderiza en el servidor: el servidor esta en UTC y el navegador en su
+zona, y React falla al hidratar (#418). Calcularlo en la zona de `useViewerTimeZone()`, que es Madrid tanto en el
+render del servidor como en la hidratacion, y despues cambia a la del navegador.

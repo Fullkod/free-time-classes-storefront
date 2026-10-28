@@ -54,3 +54,10 @@ Matices posteriores (28/10): F097 desactivo WhatsApp a TODOS los existentes (044
 F081 aplica solo a estudiantes y ya lo cumplia la RLS (039), asi que se quito el selector; reseñas: RLS en la 045.
 Agenda en la zona del tutor: PRP-002 (`.claude/PRPs/prp-tutor-agenda-timezone.md`), su estado de fases vive en el PRP.
 Decisiones nuevas que surjan: preguntar, no inventar.
+
+**Cierre (2026-10-28):** con el OK del usuario se cerraron FRE0007 y todos los WP. F103 (baseline del esquema con
+`supabase db dump`, necesita la contrasena de la BD) se separo a FRE0018. Antes del cierre se probo en produccion
+(lectura y escritura con limpieza; ver `reference/local-verification.md`), lo que destapo un error de hidratacion fuera
+de la hora de Madrid (`b23d962`). Despliegue registrado en Tasknic con las migraciones 028–052. Siguen pendientes de
+hacer a mano: avisar a los tutores del piloto de que reactiven WhatsApp y rehacer los eventos de Meet de las clases 33,
+35, 36 y 37.
