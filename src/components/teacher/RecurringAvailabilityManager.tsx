@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useTranslations } from "@/i18n/translations";
 import { createClient } from "@/lib/supabase/client";
+import AgendaTimeZoneField from "@/components/teacher/AgendaTimeZoneField";
 import type { AvailabilityException, TutorAvailabilityRule } from "@/types/availability";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -29,6 +30,9 @@ import { toast } from "sonner";
 interface RecurringAvailabilityManagerProps {
   tutorId: string;
   onChanged?: () => void;
+  /** Zone of the agenda (PRP-002); null until the tutor confirms it. */
+  tutorTimeZone: string | null;
+  onTimeZoneSaved: (timeZone: string) => void;
 }
 
 function formatTimeHm(value: string | null | undefined): string {
@@ -39,6 +43,8 @@ function formatTimeHm(value: string | null | undefined): string {
 export default function RecurringAvailabilityManager({
   tutorId,
   onChanged,
+  tutorTimeZone,
+  onTimeZoneSaved,
 }: RecurringAvailabilityManagerProps) {
   const t = useTranslations("teacherProfile.recurringAvailability");
   const tTeacher = useTranslations("teacherProfile");
@@ -141,6 +147,10 @@ export default function RecurringAvailabilityManager({
 
   const submitRule = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!tutorTimeZone) {
+      toast.error(t("needZoneFirst"));
+      return;
+    }
     try {
       setRuleSaving(true);
       const res = await fetch(`/api/availability/rules`, {
@@ -198,6 +208,10 @@ export default function RecurringAvailabilityManager({
 
   const submitBlock = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!tutorTimeZone) {
+      toast.error(t("needZoneFirst"));
+      return;
+    }
     if (!blockForm.exception_date) {
       toast.error(t("pickDate"));
       return;
@@ -246,6 +260,10 @@ export default function RecurringAvailabilityManager({
 
   const submitExtra = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!tutorTimeZone) {
+      toast.error(t("needZoneFirst"));
+      return;
+    }
     if (!extraForm.exception_date) {
       toast.error(t("pickDate"));
       return;
@@ -345,9 +363,8 @@ export default function RecurringAvailabilityManager({
           <CardDescription className="text-ft-ink-3">{t("weeklyDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="rounded-ft border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-            {t("weeklyGenerationNote")}
-          </div>
+          <AgendaTimeZoneField timeZone={tutorTimeZone} onSaved={onTimeZoneSaved} />
+          <p className="text-xs text-ft-ink-3">{t("weeklyGenerationNote")}</p>
           <form onSubmit={submitRule} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="ra-day">{t("weekday")}</Label>

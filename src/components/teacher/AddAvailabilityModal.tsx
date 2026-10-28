@@ -17,29 +17,34 @@ import {
 } from "@/components/teacher/ftStyles";
 import { useTranslations } from "@/i18n/translations";
 import { useEffect, useState } from "react";
+import { epochToWallClock, wallClockToEpoch } from "@/lib/datetime/zonedTime";
 
 interface AddAvailabilityModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  initialDate?: Date;
+  /** Selected start as tutor wall-clock (`YYYY-MM-DDTHH:mm`). */
+  initialWallClock?: string;
+  /** Zone of the tutor's agenda (PRP-002): the date and times are entered in it. */
+  tutorTimeZone: string;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-function toDateValue(d: Date): string {
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+/** Next full hour in the tutor's zone, as wall-clock `YYYY-MM-DDTHH:mm`. */
+function nextHourWallClock(timeZone: string): string {
+  const now = epochToWallClock(Date.now(), timeZone);
+  const hourStart = wallClockToEpoch(`${now.slice(0, 13)}:00:00`, timeZone) ?? Date.now();
+  return epochToWallClock(hourStart + 60 * 60_000, timeZone).slice(0, 16);
 }
 
-function toTimeValue(d: Date): string {
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function getNextHourDate(): Date {
-  const next = new Date();
-  next.setMinutes(0, 0, 0);
-  next.setHours(next.getHours() + 1);
-  return next;
+/** Wall-clock `YYYY-MM-DDTHH:mm` plus one hour (calendar arithmetic). */
+function plusOneHour(wallClock: string): string {
+  const [date, time] = wallClock.split("T");
+  const [y, m, d] = date.split("-").map(Number);
+  const [h, mi] = time.split(":").map(Number);
+  const shifted = new Date(Date.UTC(y, m - 1, d, h + 1, mi));
+  return `${shifted.toISOString().slice(0, 10)}T${pad(shifted.getUTCHours())}:${pad(shifted.getUTCMinutes())}`;
 }
 
 /**
@@ -50,7 +55,8 @@ export default function AddAvailabilityModal({
   isOpen,
   onClose,
   onSuccess,
-  initialDate,
+  initialWallClock,
+  tutorTimeZone,
 }: AddAvailabilityModalProps) {
   const t = useTranslations("teacherProfile.addAvailabilityModal");
   const [loading, setLoading] = useState(false);
@@ -60,15 +66,15 @@ export default function AddAvailabilityModal({
   // Keep the form synced when opening the modal from a calendar selection.
   useEffect(() => {
     if (!isOpen) return;
-    const start = initialDate ?? getNextHourDate();
-    const end = new Date(start.getTime() + 60 * 60_000);
+    const start = initialWallClock ?? nextHourWallClock(tutorTimeZone);
+    const end = plusOneHour(start);
     setFormData({
-      date: toDateValue(start),
-      start: toTimeValue(start),
-      end: toTimeValue(end),
+      date: start.slice(0, 10),
+      start: start.slice(11, 16),
+      end: end.slice(0, 10) === start.slice(0, 10) ? end.slice(11, 16) : "23:59",
     });
     setError(null);
-  }, [isOpen, initialDate]);
+  }, [isOpen, initialWallClock, tutorTimeZone]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

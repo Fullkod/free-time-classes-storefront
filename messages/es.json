@@ -820,7 +820,7 @@
       "loading": "Cargando disponibilidad recurrente…",
       "weeklyTitle": "Horario semanal recurrente",
       "weeklyDescription": "Define las franjas en las que das clase cada semana. Los estudiantes reservan tus cursos dentro de ellas, con la duración de cada curso, hasta 8 semanas por delante.",
-      "weeklyGenerationNote": "Las horas libres se calculan solas: lo ya reservado y lo bloqueado nunca se ofrece. Indica las horas en hora de Madrid (España); cada estudiante las ve en su zona horaria.",
+      "weeklyGenerationNote": "Las horas libres se calculan solas: lo ya reservado y lo bloqueado nunca se ofrece. Indica las horas en tu zona horaria; cada estudiante las ve en la suya.",
       "weekday": "Día",
       "weekdays": {
         "0": "Domingo",
@@ -878,7 +878,8 @@
       "confirmDeleteException": "¿Eliminar esta excepción?",
       "exceptionDeleted": "Excepción eliminada.",
       "exceptionSaveError": "No se pudo guardar la excepción.",
-      "exceptionDeleteError": "No se pudo eliminar la excepción."
+      "exceptionDeleteError": "No se pudo eliminar la excepción.",
+      "needZoneFirst": "Confirma tu zona horaria para añadir horas a tu agenda."
     },
     "addAvailabilityModal": {
       "title": "Añadir Disponibilidad",
@@ -943,6 +944,22 @@
         "description": "El curso fija el precio y la duración de tus clases.",
         "action": "Crear curso"
       }
+    },
+    "agendaTimeZone": {
+      "current": "Horas en tu zona: {zone}",
+      "change": "Cambiar",
+      "confirmTitle": "Confirma tu zona horaria",
+      "changeTitle": "Cambia la zona de tu agenda",
+      "confirmDescription": "Tus franjas, bloqueos y franjas extra se guardan en esta zona.",
+      "selectLabel": "Zona horaria",
+      "confirmAction": "Confirmar zona",
+      "changeAction": "Cambiar zona",
+      "cancel": "Cancelar",
+      "changeDialogTitle": "¿Cambiar la zona de tu agenda?",
+      "changeDialogDescription": "Tus franjas mantienen su hora local: las 10:00 siguen siendo las 10:00 en {zone}. Las clases ya reservadas no se mueven.",
+      "browserDiffers": "Tu navegador está en {browser}; tu agenda usa {zone}.",
+      "saved": "Zona horaria guardada",
+      "saveError": "No se pudo guardar la zona horaria."
     }
   },
   "settingsPage": {

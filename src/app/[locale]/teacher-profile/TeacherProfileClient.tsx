@@ -31,6 +31,7 @@ import { useAuth } from "@/context/UserContext";
 import { useTranslations } from "@/i18n/translations";
 import { createClient } from "@/lib/supabase/client";
 import { getPublicUrl } from "@/lib/supabase/storage";
+import { resolveTimeZone } from "@/lib/datetime/zonedTime";
 import { cn, getAvatarColor } from "@/lib/utils";
 import type { CourseWithRelations } from "@/types/course";
 import type { Subject } from "@/types/subject";
@@ -420,12 +421,20 @@ export default function TeacherProfileClient({
 
             {activeTab === "availability" && (
               <section className="rounded-ft-lg border border-ft-line-soft bg-ft-paper p-4 md:p-5">
-                <AvailabilityCalendar refreshKey={calendarRefresh} />
+                <AvailabilityCalendar
+                  refreshKey={calendarRefresh}
+                  tutorTimeZone={resolveTimeZone(tutorProfile?.timezone)}
+                />
                 {teacherUser.id ? (
                   <div className="mt-4">
                     <RecurringAvailabilityManager
                       tutorId={teacherUser.id}
                       onChanged={() => setCalendarRefresh((n) => n + 1)}
+                      tutorTimeZone={tutorProfile?.timezone ?? null}
+                      onTimeZoneSaved={(timezone) => {
+                        setTutorProfile((prev) => (prev ? { ...prev, timezone } : prev));
+                        setCalendarRefresh((n) => n + 1);
+                      }}
                     />
                   </div>
                 ) : null}

@@ -820,7 +820,7 @@
       "loading": "Loading recurring availability…",
       "weeklyTitle": "Weekly recurring schedule",
       "weeklyDescription": "Set the time windows when you teach every week. Students book your courses inside them, with each course's length, up to 8 weeks ahead.",
-      "weeklyGenerationNote": "Open times are computed automatically: booked or blocked time is never offered. Enter times in Madrid (Spain) time; each student sees them in their own time zone.",
+      "weeklyGenerationNote": "Open times are computed automatically: anything booked or blocked is never offered. Enter times in your own time zone; each student sees them in theirs.",
       "weekday": "Day",
       "weekdays": {
         "0": "Sunday",
@@ -878,7 +878,8 @@
       "confirmDeleteException": "Delete this exception?",
       "exceptionDeleted": "Exception deleted.",
       "exceptionSaveError": "Could not save the exception.",
-      "exceptionDeleteError": "Could not delete the exception."
+      "exceptionDeleteError": "Could not delete the exception.",
+      "needZoneFirst": "Confirm your time zone before adding times to your agenda."
     },
     "addAvailabilityModal": {
       "title": "Add Availability",
@@ -943,6 +944,22 @@
         "description": "The course sets the price and length of your classes.",
         "action": "Create course"
       }
+    },
+    "agendaTimeZone": {
+      "current": "Times in your zone: {zone}",
+      "change": "Change",
+      "confirmTitle": "Confirm your time zone",
+      "changeTitle": "Change your agenda's time zone",
+      "confirmDescription": "Your weekly windows, blocks and extra windows are saved in this zone.",
+      "selectLabel": "Time zone",
+      "confirmAction": "Confirm zone",
+      "changeAction": "Change zone",
+      "cancel": "Cancel",
+      "changeDialogTitle": "Change your agenda's time zone?",
+      "changeDialogDescription": "Your windows keep their local time: 10:00 stays 10:00 in {zone}. Classes already booked do not move.",
+      "browserDiffers": "Your browser is set to {browser}; your agenda uses {zone}.",
+      "saved": "Time zone saved",
+      "saveError": "Could not save the time zone."
     }
   },
   "settingsPage": {

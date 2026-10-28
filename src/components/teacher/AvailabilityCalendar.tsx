@@ -21,6 +21,9 @@ import {
   getLessonWithRelations,
 } from "@/lib/supabase/queries/lessons";
 import { createClient } from "@/lib/supabase/client";
+import { BUSINESS_TIMEZONE } from "@/lib/datetime/lessonTime";
+import { epochToWallClock, wallClockToEpoch } from "@/lib/datetime/zonedTime";
+import { formatLessonTimestamp } from "@/lib/datetime/viewerTime";
 import type { LessonWithRelations } from "@/types/lesson";
 import { DateSelectArg, DatesSetArg, EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -43,11 +46,14 @@ const ConfirmActionDialog = dynamic(
   { ssr: false }
 );
 
+// PRP-002: FullCalendar runs with timeZone="UTC" and receives wall-clock
+// strings that are already in the tutor's zone, so every Date it hands back
+// (range, selection) carries the tutor's wall-clock in its UTC fields.
 interface Event {
   id: string;
   title: string;
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
   backgroundColor: string;
   /** "background" for availability windows and blocks (not clickable). */
   display?: "background";
@@ -64,10 +70,11 @@ type WindowException = {
 const WINDOW_COLOR = "#BBF7D0";
 const BLOCK_COLOR = "#FECACA";
 
-const pad2 = (n: number) => String(n).padStart(2, "0");
-const localDateKey = (d: Date) =>
-  `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-const atTime = (dateKey: string, time: string) => new Date(`${dateKey}T${time.slice(0, 5)}:00`);
+const wallDateKey = (d: Date) => d.toISOString().slice(0, 10);
+const atTime = (dateKey: string, time: string) => `${dateKey}T${time.slice(0, 5)}:00`;
+/** Instant (ISO) of a calendar Date whose UTC fields hold tutor wall-clock. */
+const calendarDateToIso = (d: Date, timeZone: string) =>
+  new Date(wallClockToEpoch(d.toISOString().slice(0, 19), timeZone) ?? d.getTime()).toISOString();
 
 /**
  * Background events for the tutor's weekly windows and extras (green) and
@@ -81,8 +88,8 @@ function windowBackgroundEvents(
   end: Date
 ): Event[] {
   const out: Event[] = [];
-  for (const d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-    const key = localDateKey(d);
+  for (const d = new Date(start); d < end; d.setUTCDate(d.getUTCDate() + 1)) {
+    const key = wallDateKey(d);
     const dayExceptions = exceptions.filter((e) => e.exception_date === key);
     const fullDayBlock = dayExceptions.some(
       (e) => e.type === "blocked" && (e.start_time == null || e.end_time == null)
@@ -90,7 +97,7 @@ function windowBackgroundEvents(
     const windows = fullDayBlock
       ? []
       : [
-          ...rules.filter((r) => r.day_of_week === d.getDay()),
+          ...rules.filter((r) => r.day_of_week === d.getUTCDay()),
           ...dayExceptions.filter((e) => e.type === "extra" && e.start_time && e.end_time),
         ];
     windows.forEach((w, i) =>
@@ -139,10 +146,13 @@ const STATUS_COLORS = {
 interface AvailabilityCalendarProps {
   /** Increment to refetch events after bulk availability changes */
   refreshKey?: number;
+  /** Zone the agenda is shown in (PRP-002). */
+  tutorTimeZone: string;
 }
 
 export default function AvailabilityCalendar({
   refreshKey,
+  tutorTimeZone,
 }: AvailabilityCalendarProps) {
   const locale = useLocale();
   const t = useTranslations("teacherProfile");
@@ -156,7 +166,7 @@ export default function AvailabilityCalendar({
   const [calendarLoading, setCalendarLoading] = useState(false);
   const { user } = useAuth();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [selectedWallClock, setSelectedWallClock] = useState<string | undefined>();
   const [currentRange, setCurrentRange] = useState<{ start: Date; end: Date } | null>(
     null
   );
@@ -166,8 +176,8 @@ export default function AvailabilityCalendar({
       try {
         setCalendarLoading(true);
         const params = new URLSearchParams({
-          start: start.toISOString(),
-          end: end.toISOString(),
+          start: calendarDateToIso(start, tutorTimeZone),
+          end: calendarDateToIso(end, tutorTimeZone),
         });
         const response = await fetch(
           `/api/bookings/tutor/calendar?${params}`,
@@ -195,14 +205,17 @@ export default function AvailabilityCalendar({
                     ? "available"
                     : "fallback";
 
+            // Lessons are Madrid wall-clock: show them in the tutor's zone.
+            const startMs =
+              wallClockToEpoch(
+                item.scheduledDateTime!.replace(" ", "T").slice(0, 19),
+                BUSINESS_TIMEZONE
+              ) ?? 0;
             return {
               id: String(item.lessonId),
               title: `${item.subjectName || ""} · ${item.price}€`,
-              start: new Date(item.scheduledDateTime!),
-              end: new Date(
-                new Date(item.scheduledDateTime!).getTime() +
-                  item.durationMinutes * 60000
-              ),
+              start: epochToWallClock(startMs, tutorTimeZone),
+              end: epochToWallClock(startMs + item.durationMinutes * 60000, tutorTimeZone),
               backgroundColor:
                 STATUS_COLORS[statusKey as keyof typeof STATUS_COLORS] ||
                 STATUS_COLORS.fallback,
@@ -222,8 +235,8 @@ export default function AvailabilityCalendar({
               .from("availability_exceptions")
               .select("exception_date, start_time, end_time, type")
               .eq("tutor_id", user.id)
-              .gte("exception_date", localDateKey(start))
-              .lte("exception_date", localDateKey(end)),
+              .gte("exception_date", wallDateKey(start))
+              .lte("exception_date", wallDateKey(end)),
           ]);
           backgroundEvents = windowBackgroundEvents(
             (rulesRes.data ?? []) as WindowRule[],
@@ -243,7 +256,15 @@ export default function AvailabilityCalendar({
         if (!signal?.aborted) setCalendarLoading(false);
       }
     },
-    [user?.id]
+    [user?.id, tutorTimeZone]
+  );
+
+  // Stable identity: a new function each render makes FullCalendar reset its
+  // view and fire datesSet again (update loop).
+  const calendarNow = useCallback(
+    // A Date whose UTC fields hold the tutor's wall-clock (timeZone="UTC").
+    () => new Date(`${epochToWallClock(Date.now(), tutorTimeZone)}Z`),
+    [tutorTimeZone]
   );
 
   const handleDatesSet = (arg: DatesSetArg) => {
@@ -285,8 +306,8 @@ export default function AvailabilityCalendar({
     const calendarApi = selectInfo.view.calendar;
     calendarApi.unselect();
 
-    // Open the add availability modal with the selected date
-    setSelectedDate(selectInfo.start);
+    // Open the add availability modal with the selected (tutor) wall-clock
+    setSelectedWallClock(selectInfo.start.toISOString().slice(0, 16));
     setShowAddModal(true);
   };
 
@@ -411,6 +432,8 @@ export default function AvailabilityCalendar({
             dayMaxEvents={true}
             weekends={true}
             events={events}
+            timeZone="UTC"
+            now={calendarNow}
             select={handleDateSelect}
             eventClick={handleEventClick}
             datesSet={handleDatesSet}
@@ -495,9 +518,12 @@ export default function AvailabilityCalendar({
                       {t("date")}
                     </p>
                     <p className="text-sm text-ft-ink-2">
-                      {new Date(
-                        selectedLesson.scheduled_date_time
-                      ).toLocaleString()}
+                      {formatLessonTimestamp(
+                        selectedLesson.scheduled_date_time,
+                        locale,
+                        tutorTimeZone,
+                        { dateStyle: "medium", timeStyle: "short" }
+                      )}
                     </p>
                   </div>
                 )}
@@ -563,10 +589,11 @@ export default function AvailabilityCalendar({
         isOpen={showAddModal}
         onClose={() => {
           setShowAddModal(false);
-          setSelectedDate(undefined);
+          setSelectedWallClock(undefined);
         }}
         onSuccess={handleAddAvailabilitySuccess}
-        initialDate={selectedDate}
+        initialWallClock={selectedWallClock}
+        tutorTimeZone={tutorTimeZone}
       />
     </Card>
   );
