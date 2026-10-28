@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { verifySignature } from "@/lib/whatsapp/verifySignature";
@@ -87,17 +88,17 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Idempotency — build our own key (guide §5.5) and dedup atomically via
-  // the unique constraint on wa_inbound_events.idempotency_key.
-  const headerKey = request.headers.get("x-openwa-idempotency-key");
+  // the unique constraint on wa_inbound_events.idempotency_key. Only signed
+  // fields count: an unsigned header would let a replayed body through (F095).
   const dataId = typeof data.id === "string" ? data.id : "";
   const deliveryId = typeof env.deliveryId === "string" ? env.deliveryId : "";
-  const idemKey = !isBogusKey(headerKey)
-    ? (headerKey as string)
+  const idemKey = !isBogusKey(dataId)
+    ? `msgid:${dataId}`
     : !isBogusKey(env.idempotencyKey as string)
       ? (env.idempotencyKey as string)
-      : dataId
-        ? `msgid:${dataId}`
-        : `dlv:${deliveryId}`;
+      : !isBogusKey(deliveryId)
+        ? `dlv:${deliveryId}`
+        : `body:${createHash("sha256").update(rawBody).digest("hex")}`;
 
   const from = typeof data.from === "string" ? data.from.trim() : "";
   if (!SENDER_ID_PATTERN.test(from)) {
