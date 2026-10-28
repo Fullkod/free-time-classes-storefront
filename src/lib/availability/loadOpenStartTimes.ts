@@ -12,6 +12,7 @@ import {
   nowAsLessonTimestamp,
   nowPlusMinutesAsLessonTimestamp,
 } from "@/lib/datetime/lessonTime";
+import { isValidTimeZone, resolveTimeZone } from "@/lib/datetime/zonedTime";
 
 /** Longest class allowed; bounds the lookback for classes that overlap the range. */
 const MAX_LESSON_MINUTES = 240;
@@ -70,7 +71,12 @@ export async function loadOpenStartTimes(
   const toDate = range.toDate && range.toDate < lastDay ? range.toDate : lastDay;
   if (fromDate > toDate) return [];
 
-  const [rulesRes, exceptionsRes, busyRes] = await Promise.all([
+  // PRP-002: exception dates are tutor dates, which can fall a day either
+  // side of the Madrid range.
+  const exceptionsFrom = addMinutesToLessonTimestamp(`${fromDate}T00:00:00`, -24 * 60).slice(0, 10);
+  const exceptionsTo = addMinutesToLessonTimestamp(`${toDate}T00:00:00`, 24 * 60).slice(0, 10);
+
+  const [rulesRes, exceptionsRes, busyRes, profileRes] = await Promise.all([
     admin
       .from("tutor_availability")
       .select("day_of_week, start_time, end_time, is_active")
@@ -80,8 +86,8 @@ export async function loadOpenStartTimes(
       .from("availability_exceptions")
       .select("exception_date, start_time, end_time, type")
       .eq("tutor_id", course.tutor_id)
-      .gte("exception_date", fromDate)
-      .lte("exception_date", toDate),
+      .gte("exception_date", exceptionsFrom)
+      .lte("exception_date", exceptionsTo),
     admin
       .from("lessons")
       .select("scheduled_date_time, duration_minutes")
@@ -92,10 +98,16 @@ export async function loadOpenStartTimes(
         addMinutesToLessonTimestamp(`${fromDate}T00:00:00`, -MAX_LESSON_MINUTES)
       )
       .lte("scheduled_date_time", `${toDate}T23:59:59`),
+    admin.from("tutor_profiles").select("timezone").eq("id", course.tutor_id).maybeSingle(),
   ]);
 
   if (rulesRes.error || exceptionsRes.error || busyRes.error) {
     throw new Error("Failed to load the tutor's availability.");
+  }
+
+  const storedZone = (profileRes.data?.timezone as string | null | undefined) ?? null;
+  if (storedZone && !isValidTimeZone(storedZone)) {
+    console.error("[loadOpenStartTimes] invalid tutor timezone, using Madrid:", course.tutor_id);
   }
 
   return computeOpenStartTimes({
@@ -106,5 +118,6 @@ export async function loadOpenStartTimes(
     fromDate,
     toDate,
     minStart: nowPlusMinutesAsLessonTimestamp(MIN_LEAD_MINUTES),
+    tutorTimeZone: resolveTimeZone(storedZone),
   });
 }

@@ -1,11 +1,15 @@
+import { BUSINESS_TIMEZONE } from "@/lib/datetime/lessonTime";
+import { epochToWallClock, wallClockToEpoch } from "@/lib/datetime/zonedTime";
+
 /**
  * Open start times for a course (PRP-001): the tutor's weekly windows plus
  * "extra" windows, minus "blocked" exceptions and already committed classes,
  * keeping only starts on the grid where the whole course duration fits.
  *
- * Pure and timezone-free: every value is Madrid wall-clock
- * (`YYYY-MM-DD`, `HH:mm[:ss]`, `YYYY-MM-DDTHH:mm:ss`) and the arithmetic is
- * done on calendar minutes, so the server timezone never leaks in (F087).
+ * PRP-002: rules and exceptions are wall-clock in the tutor's zone; busy
+ * classes, `minStart`, the date range and the output are Madrid wall-clock.
+ * Windows are expanded per tutor date (so each country's DST applies) and
+ * compared as instants; the server timezone never leaks in (F087).
  */
 
 /** Minutes between two consecutive bookable start times. */
@@ -38,12 +42,14 @@ export type OpenStartTimesInput = {
   exceptions: AvailabilityWindowException[];
   busy: BusyInterval[];
   durationMinutes: number;
-  /** First and last day to scan, inclusive (`YYYY-MM-DD`). */
+  /** First and last day to return, inclusive (`YYYY-MM-DD`, Madrid). */
   fromDate: string;
   toDate: string;
   /** Earliest allowed start (`YYYY-MM-DDTHH:mm:ss`), e.g. now + minimum lead. */
   minStart: string;
   gridMinutes?: number;
+  /** IANA zone of the tutor's agenda (rules and exceptions). Default Madrid. */
+  tutorTimeZone?: string;
 };
 
 const DAY_MINUTES = 24 * 60;
@@ -62,40 +68,37 @@ function timeToMinutes(time: string): number {
   return h * 60 + (Number.isFinite(m) ? m : 0);
 }
 
-/** Absolute calendar minutes of a wall-clock timestamp. */
-function timestampToMinutes(ts: string): number {
-  const normalized = ts.replace(" ", "T");
-  return dayNumber(normalized.slice(0, 10)) * DAY_MINUTES + timeToMinutes(normalized.slice(11, 16));
-}
-
-function minutesToTimestamp(total: number): string {
-  const day = Math.floor(total / DAY_MINUTES);
-  const rest = total - day * DAY_MINUTES;
+function wallClock(day: number, minutes: number): string {
+  const extraDays = Math.floor(minutes / DAY_MINUTES);
+  const rest = minutes - extraDays * DAY_MINUTES;
   const hh = String(Math.floor(rest / 60)).padStart(2, "0");
   const mm = String(rest % 60).padStart(2, "0");
-  return `${dateKeyFromDayNumber(day)}T${hh}:${mm}:00`;
+  return `${dateKeyFromDayNumber(day + extraDays)}T${hh}:${mm}:00`;
 }
 
 export function computeOpenStartTimes(input: OpenStartTimesInput): string[] {
   const grid = input.gridMinutes ?? START_GRID_MINUTES;
   const duration = input.durationMinutes;
   if (!(duration > 0) || !(grid > 0)) return [];
+  const tutorZone = input.tutorTimeZone ?? BUSINESS_TIMEZONE;
+  const toEpoch = (ts: string, zone: string) => wallClockToEpoch(ts.replace(" ", "T"), zone);
+  const durationMs = duration * 60_000;
 
-  const minStart = timestampToMinutes(input.minStart);
-  const busy = input.busy.map((b) => {
-    const start = timestampToMinutes(b.scheduled_date_time);
-    return { start, end: start + (b.duration_minutes ?? 0) };
+  const minStart = toEpoch(input.minStart, BUSINESS_TIMEZONE) ?? 0;
+  const busy = input.busy.flatMap((b) => {
+    const start = toEpoch(b.scheduled_date_time, BUSINESS_TIMEZONE);
+    return start == null ? [] : [{ start, end: start + (b.duration_minutes ?? 0) * 60_000 }];
   });
 
   const out = new Set<string>();
-  const firstDay = dayNumber(input.fromDate);
-  const lastDay = dayNumber(input.toDate);
+  // A tutor date can map onto the previous or next Madrid date.
+  const firstDay = dayNumber(input.fromDate) - 1;
+  const lastDay = dayNumber(input.toDate) + 1;
 
   for (let day = firstDay; day <= lastDay; day++) {
     const dateKey = dateKeyFromDayNumber(day);
     // 1970-01-01 (day 0) was a Thursday.
     const dow = (((day + 4) % 7) + 7) % 7;
-    const dayStart = day * DAY_MINUTES;
 
     const exceptions = input.exceptions.filter((e) => e.exception_date === dateKey);
     const blocks = exceptions.filter((e) => e.type === "blocked");
@@ -112,20 +115,26 @@ export function computeOpenStartTimes(input: OpenStartTimesInput): string[] {
           end: timeToMinutes(e.end_time as string),
         })),
     ];
-    const blocked = blocks.map((b) => ({
-      start: dayStart + timeToMinutes(b.start_time as string),
-      end: dayStart + timeToMinutes(b.end_time as string),
-    }));
+    const blocked = blocks.flatMap((b) => {
+      const start = toEpoch(wallClock(day, timeToMinutes(b.start_time as string)), tutorZone);
+      const end = toEpoch(wallClock(day, timeToMinutes(b.end_time as string)), tutorZone);
+      return start == null || end == null ? [] : [{ start, end }];
+    });
 
     for (const w of windows) {
       const firstStart = Math.ceil(w.start / grid) * grid;
       for (let m = firstStart; m + duration <= w.end; m += grid) {
-        const start = dayStart + m;
-        const end = start + duration;
+        // Starts in the spring-forward gap do not exist: skip them.
+        const start = toEpoch(wallClock(day, m), tutorZone);
+        if (start == null) continue;
+        const end = start + durationMs;
         if (start < minStart) continue;
         if (blocked.some((b) => start < b.end && end > b.start)) continue;
         if (busy.some((b) => start < b.end && end > b.start)) continue;
-        out.add(minutesToTimestamp(start));
+        const madrid = epochToWallClock(start, BUSINESS_TIMEZONE);
+        const madridDate = madrid.slice(0, 10);
+        if (madridDate < input.fromDate || madridDate > input.toDate) continue;
+        out.add(madrid);
       }
     }
   }
