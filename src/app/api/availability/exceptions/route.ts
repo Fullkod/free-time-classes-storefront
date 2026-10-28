@@ -4,7 +4,9 @@ import {
   type SupabaseClient,
 } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import { nowAsLessonTimestamp } from "@/lib/datetime/lessonTime";
+import { BUSINESS_TIMEZONE } from "@/lib/datetime/lessonTime";
+import { epochToWallClock, wallClockToEpoch } from "@/lib/datetime/zonedTime";
+import { loadTutorTimeZone } from "@/lib/availability/tutorTimeZone";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -279,24 +281,32 @@ export async function POST(request: NextRequest) {
       }
 
       // Booked classes are never cancelled by a block: tell the tutor how
-      // many of them fall inside it so they can handle them.
+      // many of them fall inside it so they can handle them. The block is in
+      // the tutor's zone (PRP-002); classes are Madrid wall-clock.
+      const tutorZone = await loadTutorTimeZone(admin, user.id);
+      const blockStartMs =
+        wallClockToEpoch(`${exceptionDate}T${st ?? "00:00:00"}`, tutorZone) ?? 0;
+      const blockEndMs = et
+        ? wallClockToEpoch(`${exceptionDate}T${et}`, tutorZone) ?? 0
+        : blockStartMs + 24 * 60 * 60 * 1000;
       const { data: committed } = await admin
         .from("lessons")
         .select("scheduled_date_time, duration_minutes")
         .eq("tutor_id", user.id)
         .in("status", ["scheduled", "in_progress"])
-        .gte("scheduled_date_time", dayStart)
-        .lt("scheduled_date_time", dayEnd);
-      const blockStart = st ?? "00:00:00";
-      const blockEnd = et ?? "24:00:00";
+        .gte(
+          "scheduled_date_time",
+          epochToWallClock(blockStartMs - 4 * 60 * 60 * 1000, BUSINESS_TIMEZONE)
+        )
+        .lt("scheduled_date_time", epochToWallClock(blockEndMs, BUSINESS_TIMEZONE));
       const bookedConflicts = (committed ?? []).filter((row) => {
-        const startStr = String(row.scheduled_date_time).replace(" ", "T").slice(11, 19);
-        const endMin =
-          Number(startStr.slice(0, 2)) * 60 +
-          Number(startStr.slice(3, 5)) +
-          ((row.duration_minutes as number) ?? 0);
-        const endStr = `${String(Math.floor(endMin / 60)).padStart(2, "0")}:${String(endMin % 60).padStart(2, "0")}:00`;
-        return startStr < blockEnd && endStr > blockStart;
+        const startMs = wallClockToEpoch(
+          String(row.scheduled_date_time).replace(" ", "T").slice(0, 19),
+          BUSINESS_TIMEZONE
+        );
+        if (startMs == null) return false;
+        const endMs = startMs + ((row.duration_minutes as number) ?? 0) * 60_000;
+        return startMs < blockEndMs && endMs > blockStartMs;
       }).length;
 
       return noStoreJson({ id: inserted.id, bookedConflicts }, { status: 200 });
@@ -313,8 +323,11 @@ export async function POST(request: NextRequest) {
         return noStoreJson({ error: "Invalid extra exception payload." }, { status: 400 });
       }
 
-      // A window that has already ended can never be booked (F047).
-      if (`${exceptionDate}T${et.slice(0, 5)}` <= nowAsLessonTimestamp().slice(0, 16)) {
+      // A window that has already ended can never be booked (F047). The
+      // window is in the tutor's zone (PRP-002).
+      const tutorZone = await loadTutorTimeZone(admin, user.id);
+      const windowEndMs = wallClockToEpoch(`${exceptionDate}T${et}`, tutorZone);
+      if (windowEndMs == null || windowEndMs <= Date.now()) {
         return noStoreJson(
           { error: "This window is in the past.", code: "window_in_past" },
           { status: 400 }

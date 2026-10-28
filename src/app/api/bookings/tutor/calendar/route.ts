@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { BUSINESS_TIMEZONE } from "@/lib/datetime/lessonTime";
+import { epochToWallClock } from "@/lib/datetime/zonedTime";
 
 // Booking/slot state changes on every request/response: never reuse a
 // browser-cached copy (it made confirmed requests reappear as pending).
@@ -15,6 +17,18 @@ type CalendarItem = {
   lessonStatus: string;
   bookingStatus: string | null;
 };
+
+/**
+ * The calendar sends instants (ISO with offset); lessons are Madrid
+ * wall-clock, so the range is compared in Madrid (PRP-002). A value without
+ * offset is taken as Madrid wall-clock already.
+ */
+function toLessonTimestamp(value: string | null): string | null {
+  if (!value) return null;
+  if (!/(Z|[+-]\d{2}:?\d{2})$/.test(value)) return value.slice(0, 19);
+  const epoch = Date.parse(value);
+  return Number.isNaN(epoch) ? null : epochToWallClock(epoch, BUSINESS_TIMEZONE);
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,8 +52,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden." }, { status: 403 });
     }
 
-    const start = request.nextUrl.searchParams.get("start");
-    const end = request.nextUrl.searchParams.get("end");
+    const start = toLessonTimestamp(request.nextUrl.searchParams.get("start"));
+    const end = toLessonTimestamp(request.nextUrl.searchParams.get("end"));
     if (!start || !end) {
       return NextResponse.json(
         { error: "Missing start or end query params." },
