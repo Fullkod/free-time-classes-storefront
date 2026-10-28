@@ -1126,7 +1126,9 @@
     "languageSectionTitle": "Language",
     "languageSectionDescription": "Choose the app language.",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "currentPassword": "Current password",
+    "currentPasswordWrong": "The current password is not correct."
   },
   "becomeTutor": {
     "title": "Share Your Knowledge, Inspire Others",

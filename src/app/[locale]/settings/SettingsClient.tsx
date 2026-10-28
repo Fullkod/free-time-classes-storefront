@@ -52,6 +52,7 @@ export default function SettingsClient({ locale }: { locale: string }) {
   const [newEmail, setNewEmail] = useState("");
   const [isUpdatingEmail, setIsUpdatingEmail] = useState(false);
 
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
@@ -214,14 +215,18 @@ export default function SettingsClient({ locale }: { locale: string }) {
       const response = await fetch(`/api/settings/update-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: newPassword }),
+        body: JSON.stringify({ currentPassword, password: newPassword }),
       });
       const payload = (await response.json().catch(() => null)) as
-        | { error?: string }
+        | { error?: string; code?: string }
         | null;
+      if (payload?.code === "wrong_current_password") {
+        throw new Error(t("currentPasswordWrong"));
+      }
       if (!response.ok) {
         throw new Error(payload?.error || t("passwordUpdateError"));
       }
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
       toast.success(t("passwordUpdated"));
@@ -456,6 +461,24 @@ export default function SettingsClient({ locale }: { locale: string }) {
                   void handleUpdatePassword();
                 }}
               >
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="currentPassword"
+                    className="text-[11px] font-semibold uppercase tracking-[0.06em] text-ft-ink-3"
+                  >
+                    {t("currentPassword")}
+                  </label>
+                  <input
+                    id="currentPassword"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    autoComplete="current-password"
+                    required
+                    disabled={isUpdatingPassword}
+                    className="mt-1.5 w-full rounded-ft border border-ft-line bg-ft-surface-1 px-4 py-3 text-[14px] text-ft-ink outline-none focus:border-ft-ink-3 md:w-1/2"
+                  />
+                </div>
                 <div>
                   <label
                     htmlFor="newPassword"
