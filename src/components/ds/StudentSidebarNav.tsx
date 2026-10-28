@@ -12,7 +12,6 @@ import {
   MessageCircle,
   Receipt,
   Settings as SettingsIcon,
-  Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -87,13 +86,6 @@ export function StudentSidebarNav({
           badge: unreadMessages > 0 ? unreadMessages : undefined,
         },
         {
-          id: "students",
-          href: `/${locale}/teacher-profile`,
-          match: [],
-          label: t("students"),
-          icon: Users,
-        },
-        {
           id: "courses",
           href: `/${locale}/courses/create`,
           match: ["/courses/create"],
@@ -103,7 +95,8 @@ export function StudentSidebarNav({
         {
           id: "earnings",
           href: `/${locale}/settings?tab=payments`,
-          match: ["/settings"],
+          // Same route as Settings: highlighting both would be confusing (F109).
+          match: [],
           label: t("earnings"),
           icon: Receipt,
         },
@@ -148,7 +141,8 @@ export function StudentSidebarNav({
         {
           id: "payments",
           href: `/${locale}/settings?tab=payments`,
-          match: ["/settings"],
+          // Same route as Settings: highlighting both would be confusing (F109).
+          match: [],
           label: t("payments"),
           icon: Receipt,
         },
