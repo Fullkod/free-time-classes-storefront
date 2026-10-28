@@ -1,15 +1,17 @@
 "use client";
 
-import { Calendar, Compass, Home, MessageCircle, User } from "lucide-react";
+import { BookOpen, Calendar, Compass, Home, MessageCircle, User } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useTranslations } from "@/i18n/translations";
 import { cn } from "@/lib/utils";
 
-export type BottomNavTab = "home" | "explore" | "classes" | "messages" | "profile";
+export type BottomNavTab = "home" | "explore" | "classes" | "courses" | "messages" | "profile";
 
 interface BottomNavProps {
   active: BottomNavTab;
   onChange: (tab: BottomNavTab) => void;
+  /** Tutors get their own courses tab instead of "explore". */
+  isTutor?: boolean;
   className?: string;
 }
 
@@ -21,7 +23,15 @@ const ITEMS: ReadonlyArray<{ id: BottomNavTab; icon: LucideIcon }> = [
   { id: "profile", icon: User },
 ];
 
-export function BottomNav({ active, onChange, className }: BottomNavProps) {
+const TUTOR_ITEMS: ReadonlyArray<{ id: BottomNavTab; icon: LucideIcon }> = [
+  { id: "home", icon: Home },
+  { id: "classes", icon: Calendar },
+  { id: "courses", icon: BookOpen },
+  { id: "messages", icon: MessageCircle },
+  { id: "profile", icon: User },
+];
+
+export function BottomNav({ active, onChange, isTutor = false, className }: BottomNavProps) {
   const t = useTranslations("navbar.bottomNav");
   return (
     <nav
@@ -32,7 +42,7 @@ export function BottomNav({ active, onChange, className }: BottomNavProps) {
         className
       )}
     >
-      {ITEMS.map((item) => {
+      {(isTutor ? TUTOR_ITEMS : ITEMS).map((item) => {
         const Icon = item.icon;
         const isActive = active === item.id;
         return (
