@@ -4,17 +4,18 @@ import {
   ArrowRight,
   BadgeCheck,
   BookOpen,
-  BriefcaseBusiness,
   CheckCircle,
   CircleDollarSign,
   Clock3,
-  LinkIcon,
   Sparkles,
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 
 import { useAuth } from "@/context/UserContext";
+import { createClient } from "@/lib/supabase/client";
 
 export type BecomeTutorCopy = {
   title: string;
@@ -34,24 +35,13 @@ export type BecomeTutorCopy = {
   upgradeAccount: string;
   registerNow: string;
   badge: string;
-  formProfessionalTitle: string;
-  formProfessionalDescription: string;
-  formMainSubjectLabel: string;
-  formMainSubjectPlaceholder: string;
-  formExperienceLabel: string;
-  formExperiencePlaceholder: string;
-  formPortfolioLabel: string;
-  formPortfolioPlaceholder: string;
-  formRatesTitle: string;
-  formRatesDescription: string;
-  formSessionRateLabel: string;
-  formSessionRatePlaceholder: string;
-  formRateHint: string;
   termsAccept: string;
-  saveDraft: string;
-  footerReviewData: string;
+  loginRequired: string;
+  activateTitle: string;
+  activateDescription: string;
+  activating: string;
+  activateError: string;
   footerHaveAccount: string;
-  linkGoToSettings: string;
   linkSignIn: string;
 };
 
@@ -200,97 +190,34 @@ export default function BecomeTutorClient({
           </div>
         </section>
 
-        {/* Right column: form */}
+        {/* Right column: activation */}
         <section className="w-full lg:w-7/12">
           <div className="rounded-ft-2xl border border-ft-line bg-ft-paper p-5 sm:p-7 md:p-9">
-            <form className="space-y-7">
-              <div className="space-y-4">
-                <div className="border-l-2 border-ft-accent pl-3.5">
-                  <h2 className="m-0 text-[20px] font-semibold tracking-[-0.02em] text-ft-ink md:text-[22px]">
-                    {copy.formProfessionalTitle}
-                  </h2>
-                  <p className="mt-1 text-[13px] text-ft-ink-3">
-                    {copy.formProfessionalDescription}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <InputField
-                    icon={BookOpen}
-                    label={copy.formMainSubjectLabel}
-                    placeholder={copy.formMainSubjectPlaceholder}
-                  />
-                  <InputField
-                    icon={BriefcaseBusiness}
-                    label={copy.formExperienceLabel}
-                    placeholder={copy.formExperiencePlaceholder}
-                  />
-                </div>
-                <InputField
-                  icon={LinkIcon}
-                  label={copy.formPortfolioLabel}
-                  placeholder={copy.formPortfolioPlaceholder}
-                />
-              </div>
-
-              <div className="space-y-4">
-                <div className="border-l-2 border-ft-accent pl-3.5">
-                  <h2 className="m-0 text-[20px] font-semibold tracking-[-0.02em] text-ft-ink md:text-[22px]">
-                    {copy.formRatesTitle}
-                  </h2>
-                  <p className="mt-1 text-[13px] text-ft-ink-3">
-                    {copy.formRatesDescription}
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-[1.2fr_1fr]">
-                  <InputField
-                    icon={CircleDollarSign}
-                    label={copy.formSessionRateLabel}
-                    placeholder={copy.formSessionRatePlaceholder}
-                  />
-                  <div className="flex items-start gap-2 rounded-ft-md border border-ft-line bg-ft-surface-2 p-3.5 text-[12px] leading-relaxed text-ft-accent-deep">
-                    <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                    {copy.formRateHint}
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-ft border border-ft-line-soft bg-ft-surface-1 p-3.5 text-[12px] text-ft-ink-2">
-                <div className="flex items-start gap-3">
-                  <input
-                    className="mt-0.5 h-4 w-4 accent-ft-ink"
-                    type="checkbox"
-                    defaultChecked
-                  />
-                  <p className="m-0 leading-relaxed">{copy.termsAccept}</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <HeroCta
-                  user={user}
-                  locale={locale}
-                  upgradeAccountText={copy.upgradeAccount}
-                  registerNowText={copy.registerNow}
-                />
-                <button
-                  type="button"
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-ft-line bg-ft-paper px-7 text-[13px] font-semibold text-ft-ink hover:bg-ft-surface-1"
+            {user ? (
+              <ActivateTutor locale={locale} copy={copy} />
+            ) : (
+              <div className="space-y-5">
+                <p className="m-0 text-[15px] font-semibold tracking-tight text-ft-ink">
+                  {copy.loginRequired}
+                </p>
+                <Link
+                  href={`/${locale}/register`}
+                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ft-ink px-7 text-[14px] font-semibold text-ft-paper hover:bg-[#2a241b]"
                 >
-                  {copy.saveDraft}
-                </button>
+                  {copy.registerNow}
+                  <ArrowRight width={14} height={14} />
+                </Link>
+                <p className="m-0 text-center text-[13px] text-ft-ink-3">
+                  {copy.footerHaveAccount}{" "}
+                  <Link
+                    href={`/${locale}/login`}
+                    className="font-semibold text-ft-ink hover:text-ft-accent-deep"
+                  >
+                    {copy.linkSignIn}
+                  </Link>
+                </p>
               </div>
-            </form>
-
-            <p className="mt-7 text-center text-[13px] text-ft-ink-3">
-              {user ? copy.footerReviewData : copy.footerHaveAccount}{" "}
-              <Link
-                href={user ? `/${locale}/settings` : `/${locale}/login`}
-                className="font-semibold text-ft-ink hover:text-ft-accent-deep"
-              >
-                {user ? copy.linkGoToSettings : copy.linkSignIn}
-              </Link>
-            </p>
+            )}
           </div>
         </section>
       </main>
@@ -298,53 +225,66 @@ export default function BecomeTutorClient({
   );
 }
 
-function InputField({
-  icon: Icon,
-  label,
-  placeholder,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  placeholder: string;
-}) {
-  return (
-    <label className="block">
-      <span className="block pl-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-ft-ink-3">
-        {label}
-      </span>
-      <div className="group relative mt-1.5">
-        <Icon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ft-ink-3 transition-colors group-focus-within:text-ft-ink-2" />
-        <input
-          readOnly
-          value=""
-          placeholder={placeholder}
-          className="h-12 w-full rounded-ft border border-ft-line bg-ft-surface-1 pl-10 pr-4 text-[14px] text-ft-ink outline-none placeholder:text-ft-ink-3 focus:border-ft-ink-3"
-        />
-      </div>
-    </label>
-  );
-}
+/** F043: free and immediate; the tutor onboarding card takes over afterwards. */
+function ActivateTutor({ locale, copy }: { locale: string; copy: BecomeTutorCopy }) {
+  const router = useRouter();
+  const { refreshUser } = useAuth();
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-function HeroCta({
-  user,
-  locale,
-  upgradeAccountText,
-  registerNowText,
-}: {
-  user: ReturnType<typeof useAuth>["user"];
-  locale: string;
-  upgradeAccountText: string;
-  registerNowText: string;
-}) {
-  const target = user ? `/${locale}/settings` : `/${locale}/register`;
-  const label = user ? upgradeAccountText : registerNowText;
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!acceptTerms || isSubmitting) return;
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/settings/become-tutor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ acceptTerms: true }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // The middleware reads the role from the JWT: get one with is_tutor.
+      await createClient().auth.refreshSession();
+      await refreshUser();
+      router.push(`/${locale}/teacher-profile`);
+    } catch (err) {
+      console.error("[become-tutor] activation failed:", err);
+      setError(copy.activateError);
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <Link
-      href={target}
-      className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ft-ink px-7 text-[14px] font-semibold text-ft-paper hover:bg-[#2a241b]"
-    >
-      {label}
-      <ArrowRight width={14} height={14} />
-    </Link>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="border-l-2 border-ft-accent pl-3.5">
+        <h2 className="m-0 text-[20px] font-semibold tracking-[-0.02em] text-ft-ink md:text-[22px]">
+          {copy.activateTitle}
+        </h2>
+        <p className="mt-1 text-[13px] text-ft-ink-3">{copy.activateDescription}</p>
+      </div>
+
+      <label className="flex items-start gap-3 rounded-ft border border-ft-line-soft bg-ft-surface-1 p-3.5 text-[12px] text-ft-ink-2">
+        <input
+          className="mt-0.5 h-4 w-4 accent-ft-ink"
+          type="checkbox"
+          checked={acceptTerms}
+          onChange={(e) => setAcceptTerms(e.target.checked)}
+        />
+        <span className="leading-relaxed">{copy.termsAccept}</span>
+      </label>
+
+      {error && <p className="m-0 text-[13px] text-red-600">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={!acceptTerms || isSubmitting}
+        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ft-ink px-7 text-[14px] font-semibold text-ft-paper transition-colors hover:bg-[#2a241b] disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {isSubmitting ? copy.activating : copy.upgradeAccount}
+        {!isSubmitting && <ArrowRight width={14} height={14} />}
+      </button>
+    </form>
   );
 }
