@@ -13,6 +13,23 @@ const TUTOR_RECIPIENT_TYPES: ReadonlySet<NotificationType> = new Set([
 ]);
 
 /**
+ * Once a request is answered, cancelled or expires there is nothing left to
+ * act on: mark the tutor's request notification read (F106). Best-effort.
+ */
+export async function markRequestNotificationsRead(
+  admin: SupabaseClient,
+  bookingId: number,
+): Promise<void> {
+  const { error } = await admin
+    .from("notifications")
+    .update({ is_read: true })
+    .in("type", ["booking_request", "booking_custom_request"])
+    .eq("data->>booking_id", String(bookingId))
+    .eq("is_read", false);
+  if (error) console.error("[markRequestNotificationsRead] failed:", error.message);
+}
+
+/**
  * Insert a notification using a Supabase admin client (service role).
  * Call this from API routes after booking events.
  *

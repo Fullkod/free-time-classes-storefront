@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { deleteMeetEvent } from "@/lib/google-calendar";
-import { insertNotification } from "@/lib/notifications";
+import { insertNotification, markRequestNotificationsRead } from "@/lib/notifications";
 import { releaseLesson } from "@/lib/bookings/releaseLesson";
 import {
   STUDENT_CANCEL_HOURS,
@@ -133,6 +133,7 @@ export async function POST(request: NextRequest) {
     if (!cancelledRows?.length) {
       return noStoreJson({ error: "This booking cannot be cancelled." }, { status: 409 });
     }
+    await markRequestNotificationsRead(admin, bookingId);
 
     let cancelledStart: string | null = booking.requested_scheduled_date_time ?? null;
     if (booking.lesson_id) {

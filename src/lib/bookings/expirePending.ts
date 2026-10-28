@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { insertNotification } from "@/lib/notifications";
+import { insertNotification, markRequestNotificationsRead } from "@/lib/notifications";
 import { releaseLesson } from "@/lib/bookings/releaseLesson";
 import { nowAsLessonTimestamp } from "@/lib/datetime/lessonTime";
 import { pendingExpiresAt } from "@/lib/bookings/pendingExpiry";
@@ -75,6 +75,7 @@ export async function expirePendingBookings(
     }
     if (!updated?.length) continue; // answered meanwhile
     expired += 1;
+    await markRequestNotificationsRead(admin, row.id);
 
     if (row.lesson_id) {
       await releaseLesson(admin, row.lesson_id, {

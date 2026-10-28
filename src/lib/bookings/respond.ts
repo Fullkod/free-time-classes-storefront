@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createMeetEvent, hasGoogleConnection } from "@/lib/google-calendar";
-import { insertNotification } from "@/lib/notifications";
+import { insertNotification, markRequestNotificationsRead } from "@/lib/notifications";
 import { releaseLesson } from "@/lib/bookings/releaseLesson";
 import { isValidMeetLink } from "@/lib/bookings/meetLink";
 import { findScheduleConflict } from "@/lib/bookings/scheduleConflict";
@@ -217,6 +217,7 @@ export async function respondToBooking(
           }
         : ALREADY_HANDLED;
     }
+    await markRequestNotificationsRead(admin, bookingId);
 
     const manualMeetLink = requestedMeetLink;
     let finalMeetLink = manualMeetLink;
@@ -347,6 +348,7 @@ export async function respondToBooking(
     };
   }
   if (!rejectedRows?.length) return ALREADY_HANDLED;
+  await markRequestNotificationsRead(admin, bookingId);
 
   if (booking.lesson_id) {
     const { data: lessonToReject } = await admin
