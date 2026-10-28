@@ -27,13 +27,13 @@ Cuba) antes del lanzamiento; evita clases ofrecidas a horas en las que el tutor 
 ## Que
 
 ### Criterios de Exito
-- [ ] Un tutor con zona `America/Havana` y franja lunes 10:00-12:00 ofrece, para un curso de 60 min, horas que en Madrid son 16:00/16:30/17:00 (o 15:00/... segun el DST de esa semana) y el estudiante las ve en su propia zona; la reserva crea la clase en wall-clock Madrid correcto
-- [ ] El motor de horas libres pasa un script de casos: tutor en Madrid (resultado identico al actual), tutor en La Habana y en Ciudad de Mexico (sin DST) en las semanas de cambio de hora de marzo/octubre/noviembre, franja que cruza medianoche en Madrid, bloqueo de dia completo en hora del tutor, extra puntual, clase reservada en medio; servidor en UTC
-- [ ] Los tutores existentes conservan exactamente sus horas libres actuales (su zona queda en `Europe/Madrid`)
-- [ ] Un tutor sin zona elegida la confirma (precargada con la de su navegador) antes de crear su primera franja; desde «Mi agenda» puede cambiarla, con aviso de lo que implica
-- [ ] El calendario de «Mi agenda» muestra franjas, bloqueos y clases reservadas en la zona del tutor, con etiqueta de zona y el indicador de «ahora» correcto
-- [ ] Un valor de zona invalido no puede guardarse (validacion en API y en BD) y nunca rompe `/api/availability/open-times`
-- [ ] `npx tsc --noEmit`, `npm run lint` y `npm run check:i18n-scopes` pasan; flujo verificado en navegador con cuentas de prueba (prefijo `QA-`, limpieza final) y `browser.newContext({ timezoneId })`
+- [x] Un tutor con zona `America/Havana` y franja lunes 10:00-12:00 ofrece, para un curso de 60 min, horas que en Madrid son 16:00/16:30/17:00 (o 15:00/... segun el DST de esa semana) y el estudiante las ve en su propia zona; la reserva crea la clase en wall-clock Madrid correcto
+- [x] El motor de horas libres pasa un script de casos: tutor en Madrid (resultado identico al actual), tutor en La Habana y en Ciudad de Mexico (sin DST) en las semanas de cambio de hora de marzo/octubre/noviembre, franja que cruza medianoche en Madrid, bloqueo de dia completo en hora del tutor, extra puntual, clase reservada en medio; servidor en UTC
+- [x] Los tutores existentes conservan exactamente sus horas libres actuales (su zona queda en `Europe/Madrid`)
+- [x] Un tutor sin zona elegida la confirma (precargada con la de su navegador) antes de crear su primera franja; desde «Mi agenda» puede cambiarla, con aviso de lo que implica
+- [x] El calendario de «Mi agenda» muestra franjas, bloqueos y clases reservadas en la zona del tutor, con etiqueta de zona y el indicador de «ahora» correcto
+- [x] Un valor de zona invalido no puede guardarse (validacion en API y en BD) y nunca rompe `/api/availability/open-times`
+- [x] `npx tsc --noEmit`, `npm run lint` y `npm run check:i18n-scopes` pasan; flujo verificado en navegador con cuentas de prueba (prefijo `QA-`, limpieza final) y `browser.newContext({ timezoneId })`
 
 ### Comportamiento Esperado
 
