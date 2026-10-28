@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { FT_BTN_OUTLINE, FT_LABEL } from "@/components/teacher/ftStyles";
 import { Input } from "@/components/ui/input";
 import { SelectMenu } from "@/components/ui/select-menu";
 import { Badge } from "@/components/ui/badge";
@@ -1190,9 +1191,9 @@ export default function TutorDashboardClient({
 
       {/* Reject dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-        <DialogContent className="flex max-h-[calc(100dvh-1rem)] flex-col overflow-hidden p-0 sm:max-w-[540px]">
+        <DialogContent className="flex max-h-[calc(100dvh-1rem)] flex-col overflow-hidden border-ft-line bg-ft-paper p-0 text-ft-ink sm:max-w-[540px] sm:rounded-ft-2xl">
           <DialogHeader className="px-4 pt-6 sm:px-6">
-            <DialogTitle>{t("rejectDialogTitle")}</DialogTitle>
+            <DialogTitle className="text-[20px] font-semibold tracking-[-0.02em] text-ft-ink">{t("rejectDialogTitle")}</DialogTitle>
           </DialogHeader>
 
           {rejectTarget ? (
@@ -1202,7 +1203,7 @@ export default function TutorDashboardClient({
                 className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 pb-4 pt-1 sm:px-6"
               >
               <div className="space-y-2">
-                <Label htmlFor="reject-reason">{t("rejectReason")}</Label>
+                <Label htmlFor="reject-reason" className={FT_LABEL}>{t("rejectReason")}</Label>
                 <SelectMenu
                   id="reject-reason"
                   value={rejectReason}
@@ -1213,12 +1214,12 @@ export default function TutorDashboardClient({
                   disabled={actionLoadingBookingId === rejectTarget.booking.id}
                   aria-label={t("rejectReason")}
                   nestedScrollParentRef={rejectDialogBodyScrollRef}
-                  triggerClassName="h-10 rounded-ft border border-gray-300 bg-white shadow-sm hover:bg-gray-50/90"
+                  triggerClassName="h-10 rounded-ft border border-ft-line bg-ft-surface-1 text-ft-ink shadow-none hover:bg-ft-surface-2"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>{t("notesOptional")}</Label>
+                <Label className={FT_LABEL}>{t("notesOptional")}</Label>
                 <Input
                   placeholder={t("notesOptionalPlaceholder")}
                   value={rejectTarget.booking.notes ?? ""}
@@ -1226,13 +1227,15 @@ export default function TutorDashboardClient({
                 />
               </div>
               </div>
-              <div className="mt-2 flex shrink-0 justify-end gap-2 border-t bg-background px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
-                <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
+              <div className="mt-2 flex shrink-0 justify-end gap-2 border-t border-ft-line bg-ft-paper px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6">
+                <Button variant="outline" onClick={() => setRejectDialogOpen(false)} className={FT_BTN_OUTLINE}>
                   {t("cancelReject")}
                 </Button>
                 <Button
+                  variant="destructive"
                   onClick={() => void handleReject()}
                   disabled={actionLoadingBookingId === rejectTarget.booking.id}
+                  className="rounded-ft-md shadow-none"
                 >
                   {t("confirmReject")}
                 </Button>

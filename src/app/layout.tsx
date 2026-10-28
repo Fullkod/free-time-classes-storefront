@@ -55,7 +55,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
+      {/* data-theme on <body> so portaled dialogs, menus and toasts get the
+          FreeTime tokens too (F065); the CSS only defines --ft-* variables. */}
       <body
+        data-theme="freetime"
         className={`${plusJakartaSans.variable} ${geist.variable} ${instrumentSerif.variable} font-sans antialiased`}
       >
         {children}
