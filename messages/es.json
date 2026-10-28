@@ -1199,7 +1199,8 @@
     "liveBadge": "En vivo",
     "mentorTipTitle": "Consejo para mentores",
     "mentorTipBody": "Recuerda enviar materiales de apoyo al menos 24 horas antes para que tus clases sean más participativas.",
-    "moreTips": "Ver más consejos"
+    "moreTips": "Ver más consejos",
+    "withStudent": "Con {name}"
   },
   "courseDetail": {
     "loading": "Cargando curso...",
@@ -1417,7 +1418,18 @@
     "rejectConfirmTitle": "¿Rechazar esta solicitud?",
     "rejectConfirmBody": "El estudiante recibirá un aviso y el horario volverá a quedar disponible.",
     "keepBooking": "Volver",
-    "rateClass": "Valorar"
+    "rateClass": "Valorar",
+    "meetLink": {
+      "add": "Añadir enlace de videollamada",
+      "edit": "Cambiar enlace de videollamada",
+      "label": "Enlace de la videollamada",
+      "placeholder": "https://meet.google.com/... o Zoom, Teams, Jitsi...",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "invalid": "La URL de la videollamada debe empezar por https://",
+      "saved": "Enlace de videollamada actualizado",
+      "error": "No se pudo actualizar el enlace"
+    }
   },
   "messagesPage": {
     "title": "Mensajes",

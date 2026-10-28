@@ -1199,7 +1199,8 @@
     "liveBadge": "Live",
     "mentorTipTitle": "Mentor tip",
     "mentorTipBody": "Remember to send supporting materials at least 24 hours in advance to boost engagement in your classes.",
-    "moreTips": "See more tips"
+    "moreTips": "See more tips",
+    "withStudent": "With {name}"
   },
   "courseDetail": {
     "loading": "Loading course...",
@@ -1417,7 +1418,18 @@
     "rejectConfirmTitle": "Reject this request?",
     "rejectConfirmBody": "The student will be notified and the time slot will become available again.",
     "keepBooking": "Go back",
-    "rateClass": "Rate"
+    "rateClass": "Rate",
+    "meetLink": {
+      "add": "Add video call link",
+      "edit": "Change video call link",
+      "label": "Video call link",
+      "placeholder": "https://meet.google.com/... or Zoom, Teams, Jitsi...",
+      "save": "Save",
+      "cancel": "Cancel",
+      "invalid": "The video call link must start with https://",
+      "saved": "Video call link updated",
+      "error": "Could not update the link"
+    }
   },
   "messagesPage": {
     "title": "Messages",

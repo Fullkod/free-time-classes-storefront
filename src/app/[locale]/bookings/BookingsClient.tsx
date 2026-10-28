@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { StudentSidebarNav } from "@/components/ds/StudentSidebarNav";
 import LeaveReviewModal from "@/components/student/LeaveReviewModal";
+import MeetLinkEditor from "@/components/teacher/MeetLinkEditor";
 import { useAuth } from "@/context/UserContext";
 import { useTranslations } from "@/i18n/translations";
 import { isLessonInPast } from "@/lib/datetime/lessonTime";
@@ -691,6 +692,22 @@ export default function BookingsClient({ locale }: { locale: string }) {
                       )}
                     </div>
                   </div>
+
+                  {isTutorView && tab === "upcoming" && booking.status === "confirmed" && lesson && (
+                    <MeetLinkEditor
+                      lessonId={lesson.id}
+                      meetLink={lesson.meet_link ?? null}
+                      onSaved={(meetLink) =>
+                        setBookings((prev) =>
+                          prev.map((b) =>
+                            b.lesson?.id === lesson.id
+                              ? { ...b, lesson: { ...b.lesson, meet_link: meetLink } }
+                              : b
+                          )
+                        )
+                      }
+                    />
+                  )}
 
                   {booking.notes && (
                     <p className="mt-3 line-clamp-2 rounded-ft border border-ft-line-soft bg-ft-surface-1 px-3 py-2 text-[11px] text-ft-ink-2">

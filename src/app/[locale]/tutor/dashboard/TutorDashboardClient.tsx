@@ -750,7 +750,7 @@ export default function TutorDashboardClient({
                             {studentName.slice(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <p className="text-sm text-slate-500">Con {studentName}</p>
+                        <p className="text-sm text-slate-500">{t("withStudent", { name: studentName })}</p>
                       </div>
                       {lesson.meet_link ? (
                         <Button
@@ -760,7 +760,21 @@ export default function TutorDashboardClient({
                           <Video className="mr-2 h-4 w-4" />
                           {isCurrent ? td("resumeClass") : td("openVideoCall")}
                         </Button>
-                      ) : (
+                      ) : null}
+                      {lesson.meet_link && editingMeetLinkId !== lesson.id ? (
+                        <button
+                          type="button"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-ft-ink-2 hover:text-ft-ink"
+                          onClick={() => {
+                            setEditingMeetLinkId(lesson.id);
+                            setEditingMeetLinkValue(lesson.meet_link ?? "");
+                          }}
+                        >
+                          <LinkIcon className="h-3.5 w-3.5" />
+                          {td("editMeetLink")}
+                        </button>
+                      ) : null}
+                      {!lesson.meet_link ? (
                         <Button
                           variant="outline"
                           className="mt-4 w-full rounded-ft-md border-ft-line text-ft-ink-2"
@@ -772,7 +786,7 @@ export default function TutorDashboardClient({
                           <LinkIcon className="mr-2 h-4 w-4" />
                           {td("addMeetLink")}
                         </Button>
-                      )}
+                      ) : null}
 
                       {editingMeetLinkId === lesson.id && (
                         <div className="mt-3 space-y-2">
@@ -1076,8 +1090,20 @@ export default function TutorDashboardClient({
                               <p className="truncate text-sm text-slate-600">{studentName}</p>
                             </div>
                             <div className="flex items-center gap-2">
-                              {lesson.meet_link ? (
+                              {lesson.meet_link && editingMeetLinkId !== lesson.id ? (
                                 <>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-1"
+                                    aria-label={td("editMeetLink")}
+                                    onClick={() => {
+                                      setEditingMeetLinkId(lesson.id);
+                                      setEditingMeetLinkValue(lesson.meet_link ?? "");
+                                    }}
+                                  >
+                                    <LinkIcon className="h-3.5 w-3.5" />
+                                  </Button>
                                   <Button
                                     size="sm"
                                     variant="outline"

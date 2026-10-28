@@ -3,6 +3,7 @@ import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js
 import { createClient } from "@/lib/supabase/server";
 import { insertNotification } from "@/lib/notifications";
 import { isValidMeetLink } from "@/lib/bookings/meetLink";
+import { isLessonInPast } from "@/lib/datetime/lessonTime";
 
 const noStoreJson = (body: unknown, init?: ResponseInit) =>
   NextResponse.json(body, {
@@ -70,7 +71,11 @@ export async function PATCH(
       return noStoreJson({ error: "Forbidden." }, { status: 403 });
     }
 
-    if (lesson.status !== "scheduled" || !lesson.student_id) {
+    if (
+      lesson.status !== "scheduled" ||
+      !lesson.student_id ||
+      isLessonInPast(lesson.scheduled_date_time)
+    ) {
       return noStoreJson(
         { error: "Only booked upcoming classes can have a video call link." },
         { status: 409 }
