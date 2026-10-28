@@ -6,102 +6,12 @@ import { createClient } from "../client";
 const supabase = createClient();
 
 /**
- * Get tutor profile by ID
- */
-export async function getTutorProfile(id: string): Promise<TutorProfile | null> {
-  const { data, error } = await supabase
-    .from("tutor_profiles")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
-    throw error;
-  }
-
-  return data as TutorProfile;
-}
-
-/**
  * Get tutor profile with user data
  */
 export type TutorDisplayRow = {
   tutorId: string;
   user: Pick<User, "id" | "username" | "profile_picture">;
 };
-
-/**
- * Datos públicos del tutor para listados (historial, etc.).
- * Parte de `tutor_profiles` y el FK a `users` para no mezclar con el estudiante al anidar desde `lessons`.
- */
-export async function getTutorDisplayRowsByIds(
-  tutorIds: string[]
-): Promise<Record<string, TutorDisplayRow["user"]>> {
-  if (tutorIds.length === 0) return {};
-
-  const unique = [...new Set(tutorIds)];
-  const { data, error } = await supabase
-    .from("tutor_profiles")
-    .select(
-      `
-      id,
-      user:users!tutor_profiles_id_fkey (
-        id,
-        username,
-        profile_picture
-      )
-    `
-    )
-    .in("id", unique);
-
-  if (error) throw error;
-
-  const map: Record<string, TutorDisplayRow["user"]> = {};
-  for (const row of data || []) {
-    const tid = row.id as string;
-    // PostgREST devuelve objeto 1:1; los tipos del cliente suelen inferir el embed como array.
-    const rawUser = row.user as unknown;
-    const u = (Array.isArray(rawUser) ? rawUser[0] : rawUser) as
-      | TutorDisplayRow["user"]
-      | null
-      | undefined;
-    if (u?.id) {
-      map[tid] = {
-        id: u.id,
-        username: u.username,
-        profile_picture: u.profile_picture ?? null,
-      };
-    }
-  }
-  return map;
-}
-
-export async function getTutorProfileWithUser(
-  id: string
-): Promise<(TutorProfile & { user: User }) | null> {
-  const { data, error } = await supabase
-    .from("tutor_profiles")
-    .select(
-      `
-      *,
-      user:users!tutor_profiles_id_fkey (id, username, profile_picture, country, is_student, is_tutor)
-    `
-    )
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
-    throw error;
-  }
-
-  return data as TutorProfile & { user: User };
-}
 
 /**
  * Update tutor profile
@@ -122,22 +32,6 @@ export async function updateTutorProfile(
   }
 
   return data as TutorProfile;
-}
-
-/**
- * Get subjects taught by a tutor
- */
-export async function getTutorSubjects(tutorId: string): Promise<TutorSubject[]> {
-  const { data, error } = await supabase
-    .from("tutor_subjects")
-    .select("*")
-    .eq("tutor_id", tutorId);
-
-  if (error) {
-    throw error;
-  }
-
-  return (data || []) as TutorSubject[];
 }
 
 /**

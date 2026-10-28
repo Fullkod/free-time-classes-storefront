@@ -79,16 +79,3 @@ export async function updateUser(
   }
   return updated;
 }
-
-/**
- * Check if user exists
- */
-export async function userExists(id: string): Promise<boolean> {
-  const { data, error } = await supabase
-    .from("users")
-    .select("id")
-    .eq("id", id)
-    .single();
-
-  return !error && data !== null;
-}

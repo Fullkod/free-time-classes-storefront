@@ -1,6 +1,5 @@
 "use client";
 
-import { AppProvider } from "@/context/AppContext";
 import { NotificationsProvider } from "@/context/NotificationsContext";
 import { UserProvider } from "@/context/UserContext";
 import { useLocale } from "next-intl";
@@ -26,7 +25,6 @@ export default function LocaleLayoutWrapper({
   return (
     <UserProvider>
       <NotificationsProvider>
-      <AppProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,7 +33,6 @@ export default function LocaleLayoutWrapper({
         >
           <FreetimeShell>{children}</FreetimeShell>
         </ThemeProvider>
-      </AppProvider>
       </NotificationsProvider>
     </UserProvider>
   );

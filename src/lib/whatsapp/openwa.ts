@@ -105,11 +105,3 @@ export function sendText(chatId: string, text: string) {
     { method: "POST", body: JSON.stringify({ chatId, text }) }
   );
 }
-
-/** Check whether a phone number is registered on WhatsApp. */
-export function checkNumber(phone: string) {
-  return call<{ exists: boolean; chatId: string }>(
-    `/sessions/${SESSION_ID}/contacts/check/${phone.replace(/[^\d]/g, "")}`,
-    { method: "GET" }
-  );
-}

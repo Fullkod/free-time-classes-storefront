@@ -81,19 +81,3 @@ export async function getReviewsByStudentAndBookingIds(
   return (data || []) as Review[];
 }
 
-export async function getReviewsByStudentAndLessonIds(
-  studentId: string,
-  lessonIds: number[]
-): Promise<Review[]> {
-  if (lessonIds.length === 0) return [];
-
-  const { data, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("student_id", studentId)
-    .in("lesson_id", lessonIds);
-
-  if (error) throw error;
-  return (data || []) as Review[];
-}
-
