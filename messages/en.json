@@ -111,7 +111,14 @@
     "themeToggleAria": "Switch between light and dark mode",
     "refreshAria": "Refresh page",
     "refreshTooltip": "Refresh",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "bottomNav": {
+      "home": "Home",
+      "explore": "Explore",
+      "classes": "Classes",
+      "messages": "Chat",
+      "profile": "You"
+    }
   },
   "authCallback": {
     "verifyingTitle": "Verifying your account",
@@ -331,7 +338,15 @@
     "paymentsSub": "Plan, methods and receipts",
     "privacy": "Privacy",
     "privacySub": "Visibility and data",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "reviewHighlightsTitle": "What stood out",
+    "reviewHighlights": {
+      "precise": "Precise",
+      "constructive": "Constructive",
+      "inspiring": "Inspiring",
+      "expert": "Expert",
+      "punctual": "Punctual"
+    }
   },
   "navigation": {
     "home": "Home",
@@ -378,7 +393,8 @@
     "levelBeginner": "Beginner",
     "levelIntermediate": "Intermediate",
     "levelAdvanced": "Advanced",
-    "sortLabel": "Sort"
+    "sortLabel": "Sort",
+    "clearSearch": "Clear search"
   },
   "common": {
     "welcome": "Welcome to Free Time Classes",
@@ -509,7 +525,20 @@
     },
     "years": "years",
     "advanced": "Advanced",
-    "intermediate": "Intermediate"
+    "intermediate": "Intermediate",
+    "footerPrivacy": "Privacy",
+    "footerTerms": "Terms",
+    "footerTagline": "Learning in life's spare moments.",
+    "categories": {
+      "languages": "Languages",
+      "music": "Music",
+      "cooking": "Cooking",
+      "tech": "Technology",
+      "art": "Art & Design",
+      "wellbeing": "Wellbeing"
+    },
+    "liveBadge": "Live",
+    "liveSample": "English · 5 min"
   },
   "aboutUs": {
     "metaTitle": "About us — Free Time Classes",
@@ -776,7 +805,10 @@
       "createError": "Failed to create course.",
       "updateError": "Failed to update course.",
       "deleteError": "Failed to delete course.",
-      "reviewsLabel": "reviews"
+      "reviewsLabel": "reviews",
+      "previewBadge": "Preview",
+      "editorialTipTitle": "Editorial tip",
+      "editorialTipBody": "Courses with a clear description and concrete goals tend to convert better."
     },
     "calendar": {
       "today": "Today",
@@ -960,7 +992,9 @@
       "browserDiffers": "Your browser is set to {browser}; your agenda uses {zone}.",
       "saved": "Time zone saved",
       "saveError": "Could not save the time zone."
-    }
+    },
+    "proMentorBadge": "Pro Mentor",
+    "expertiseTitle": "Expertise"
   },
   "settingsPage": {
     "title": "Settings",
@@ -1080,7 +1114,9 @@
     "googleCalendarIntegrationsTitle": "Integrations",
     "googleCalendarAutoMeetHint": "When you confirm a booking without a manual link, a Google Meet link will be automatically generated.",
     "languageSectionTitle": "Language",
-    "languageSectionDescription": "Choose the app language."
+    "languageSectionDescription": "Choose the app language.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "becomeTutor": {
     "title": "Share Your Knowledge, Inspire Others",
@@ -1157,7 +1193,11 @@
     },
     "customRequestBadge": "Outside your availability",
     "priceFromHourlyRate": "Based on your /h rate",
-    "studentNotes": "Student note"
+    "studentNotes": "Student note",
+    "liveBadge": "Live",
+    "mentorTipTitle": "Mentor tip",
+    "mentorTipBody": "Remember to send supporting materials at least 24 hours in advance to boost engagement in your classes.",
+    "moreTips": "See more tips"
   },
   "courseDetail": {
     "loading": "Loading course...",
@@ -1257,7 +1297,8 @@
     "verified": "Verified",
     "showMore": "Show more",
     "showLess": "Show less",
-    "featuredThisWeek": "This week"
+    "featuredThisWeek": "This week",
+    "clearSearch": "Clear search"
   },
   "tutorPublicProfile": {
     "backToTutors": "Back to tutors",
@@ -1720,5 +1761,140 @@
     "updated": "Password updated",
     "linkExpired": "The link expired or was opened on another device. Request a new one.",
     "requestNewLink": "Request a new link"
+  },
+  "privacyPolicyPage": {
+    "badge": "Legal",
+    "title": "Privacy policy",
+    "lastUpdated": "Last updated: March 24, 2026.",
+    "sections": [
+      {
+        "title": "1. Information we collect",
+        "paragraphs": [
+          "We collect the data you give us when you create an account, book classes or contact support, such as your name, email address and profile details.",
+          "We also collect basic technical information needed to run the platform, such as session identifiers, device and usage metrics."
+        ]
+      },
+      {
+        "title": "2. How we use information",
+        "paragraphs": [
+          "We use your data to provide the service, manage bookings, process payments, improve the experience and send you communications about your account.",
+          "We do not use your data for purposes incompatible with providing the service without informing you first."
+        ]
+      },
+      {
+        "title": "3. Sharing data",
+        "paragraphs": [
+          "We may share data with providers that help us run the platform, for example authentication, infrastructure and payment services.",
+          "We require those providers to apply appropriate security and confidentiality measures."
+        ]
+      },
+      {
+        "title": "4. Retention and security",
+        "paragraphs": [
+          "We keep data for as long as needed to fulfil the purposes described and the applicable legal obligations.",
+          "We apply reasonable technical and organisational measures to protect your information against unauthorised access, loss or alteration."
+        ]
+      },
+      {
+        "title": "5. Your rights",
+        "paragraphs": [
+          "You can request access, rectification, erasure, restriction or objection to the processing of your data, as well as portability where applicable.",
+          "To exercise your rights, contact us at info@freetimeclasses.com."
+        ]
+      },
+      {
+        "title": "6. Changes to this policy",
+        "paragraphs": [
+          "We may update this policy to reflect legal or functional changes to the platform.",
+          "We will publish the current version on this page with its last updated date."
+        ]
+      }
+    ]
+  },
+  "termsOfServicePage": {
+    "badge": "Legal",
+    "title": "Terms of service",
+    "lastUpdated": "Last updated: March 24, 2026.",
+    "sections": [
+      {
+        "title": "1. Acceptance of the terms",
+        "paragraphs": [
+          "By signing up for or using Free Time Classes, you accept these terms of service and the policies published on the platform.",
+          "If you do not agree with any of these terms, you must refrain from using the service."
+        ]
+      },
+      {
+        "title": "2. Use of the platform",
+        "paragraphs": [
+          "You agree to use the platform lawfully, respectfully and in accordance with applicable regulations.",
+          "Publishing fraudulent or offensive content, or content that infringes third-party rights, is not allowed."
+        ]
+      },
+      {
+        "title": "3. Accounts and access",
+        "paragraphs": [
+          "You are responsible for keeping your credentials confidential and for the activity carried out from your account.",
+          "We may suspend or limit accounts that breach these terms or pose a risk to the community."
+        ]
+      },
+      {
+        "title": "4. Bookings, payments and cancellations",
+        "paragraphs": [
+          "Payment, refund and cancellation conditions may vary depending on the type of class or service booked.",
+          "Before confirming a booking, review the amounts, dates and specific policies that apply."
+        ]
+      },
+      {
+        "title": "5. Intellectual property",
+        "paragraphs": [
+          "The content, brands, design and materials of the platform belong to Free Time Classes or their respective owners.",
+          "Reproduction, distribution or commercial use without prior authorisation is not permitted."
+        ]
+      },
+      {
+        "title": "6. Limitation of liability",
+        "paragraphs": [
+          "We make reasonable efforts to keep the service available and of good quality, but we do not guarantee it will be completely free of interruptions.",
+          "To the extent permitted by law, we will not be liable for indirect damages arising from the use of the platform."
+        ]
+      },
+      {
+        "title": "7. Changes",
+        "paragraphs": [
+          "We may update these terms to adapt them to legal, technical or service changes.",
+          "The current version will be available on this page with its update date."
+        ]
+      }
+    ]
+  },
+  "contactPage": {
+    "badge": "Contact",
+    "title": "How can we <em>help</em> you today?",
+    "intro": "Check the frequently asked questions or write to us by email or from the platform's messages.",
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "category": "Contact",
+        "question": "How can I ask about payments or classes?",
+        "answer": "Email us at info@freetimeclasses.com and we will reply as soon as possible."
+      },
+      {
+        "category": "Classes",
+        "question": "Can I change tutor during a course?",
+        "answer": "It depends on the course and availability. Write to us and we will look at your case."
+      },
+      {
+        "category": "Account",
+        "question": "How do I change my email or password?",
+        "answer": "You can update your personal details and account security from Settings."
+      }
+    ],
+    "stillNeedHelp": "Still need help?",
+    "stillNeedHelpBody": "Email us or start a conversation with your tutor or other users from Messages.",
+    "emailCta": "Send an email",
+    "messagesCta": "Go to messages",
+    "tutorTitle": "Are you a tutor?",
+    "tutorBody": "Manage your courses, availability and profile from the tutor dashboard.",
+    "tutorCta": "Go to the tutor dashboard"
   }
 }

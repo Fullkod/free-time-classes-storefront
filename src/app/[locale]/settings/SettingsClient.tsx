@@ -478,7 +478,7 @@ export default function SettingsClient({ locale }: { locale: string }) {
                       type="button"
                       onClick={() => setShowNewPassword((p) => !p)}
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 grid h-7 w-7 place-items-center text-ft-ink-3"
-                      aria-label="toggle"
+                      aria-label={showNewPassword ? t("hidePassword") : t("showPassword")}
                     >
                       {showNewPassword ? (
                         <EyeOff width={14} height={14} />
@@ -510,7 +510,7 @@ export default function SettingsClient({ locale }: { locale: string }) {
                       type="button"
                       onClick={() => setShowConfirmPassword((p) => !p)}
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 grid h-7 w-7 place-items-center text-ft-ink-3"
-                      aria-label="toggle"
+                      aria-label={showConfirmPassword ? t("hidePassword") : t("showPassword")}
                     >
                       {showConfirmPassword ? (
                         <EyeOff width={14} height={14} />

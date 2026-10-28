@@ -111,7 +111,14 @@
     "themeToggleAria": "Cambiar entre modo claro y oscuro",
     "refreshAria": "Actualizar la página",
     "refreshTooltip": "Actualizar",
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "bottomNav": {
+      "home": "Inicio",
+      "explore": "Explorar",
+      "classes": "Clases",
+      "messages": "Chat",
+      "profile": "Tú"
+    }
   },
   "authCallback": {
     "verifyingTitle": "Verificando tu cuenta",
@@ -331,7 +338,15 @@
     "paymentsSub": "Plan, métodos y recibos",
     "privacy": "Privacidad",
     "privacySub": "Visibilidad y datos",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "reviewHighlightsTitle": "Lo que más destacó",
+    "reviewHighlights": {
+      "precise": "Preciso",
+      "constructive": "Constructivo",
+      "inspiring": "Inspirador",
+      "expert": "Experto",
+      "punctual": "Puntual"
+    }
   },
   "navigation": {
     "home": "Inicio",
@@ -378,7 +393,8 @@
     "levelBeginner": "Principiante",
     "levelIntermediate": "Intermedio",
     "levelAdvanced": "Avanzado",
-    "sortLabel": "Ordenar"
+    "sortLabel": "Ordenar",
+    "clearSearch": "Borrar búsqueda"
   },
   "common": {
     "welcome": "Bienvenido a Free Time Classes",
@@ -509,7 +525,20 @@
     },
     "years": "años",
     "advanced": "Avanzado",
-    "intermediate": "Intermedio"
+    "intermediate": "Intermedio",
+    "footerPrivacy": "Privacidad",
+    "footerTerms": "Términos",
+    "footerTagline": "Aprender en los huecos de la vida.",
+    "categories": {
+      "languages": "Idiomas",
+      "music": "Música",
+      "cooking": "Cocina",
+      "tech": "Tecnología",
+      "art": "Arte & Diseño",
+      "wellbeing": "Bienestar"
+    },
+    "liveBadge": "En vivo",
+    "liveSample": "Inglés · 5 min"
   },
   "aboutUs": {
     "metaTitle": "Sobre nosotros — Free Time Classes",
@@ -776,7 +805,10 @@
       "createError": "No se pudo crear el curso.",
       "updateError": "No se pudo actualizar el curso.",
       "deleteError": "No se pudo eliminar el curso.",
-      "reviewsLabel": "reseñas"
+      "reviewsLabel": "reseñas",
+      "previewBadge": "Vista previa",
+      "editorialTipTitle": "Consejo editorial",
+      "editorialTipBody": "Los cursos con una descripción clara y objetivos concretos suelen convertir mejor."
     },
     "calendar": {
       "today": "Hoy",
@@ -960,7 +992,9 @@
       "browserDiffers": "Tu navegador está en {browser}; tu agenda usa {zone}.",
       "saved": "Zona horaria guardada",
       "saveError": "No se pudo guardar la zona horaria."
-    }
+    },
+    "proMentorBadge": "Pro Mentor",
+    "expertiseTitle": "Especialidades"
   },
   "settingsPage": {
     "title": "Configuración",
@@ -1080,7 +1114,9 @@
     "googleCalendarIntegrationsTitle": "Integraciones",
     "googleCalendarAutoMeetHint": "Cuando confirmes una reserva sin enlace manual, se generará un enlace de Google Meet automáticamente.",
     "languageSectionTitle": "Idioma",
-    "languageSectionDescription": "Elige el idioma de la aplicación."
+    "languageSectionDescription": "Elige el idioma de la aplicación.",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
   "becomeTutor": {
     "title": "Comparte Tu Conocimiento, Inspira a Otros",
@@ -1157,7 +1193,11 @@
     },
     "customRequestBadge": "Fuera de tu disponibilidad",
     "priceFromHourlyRate": "Según tu tarifa/h",
-    "studentNotes": "Nota del estudiante"
+    "studentNotes": "Nota del estudiante",
+    "liveBadge": "En vivo",
+    "mentorTipTitle": "Consejo para mentores",
+    "mentorTipBody": "Recuerda enviar materiales de apoyo al menos 24 horas antes para que tus clases sean más participativas.",
+    "moreTips": "Ver más consejos"
   },
   "courseDetail": {
     "loading": "Cargando curso...",
@@ -1257,7 +1297,8 @@
     "verified": "Verificado",
     "showMore": "Ver más",
     "showLess": "Ver menos",
-    "featuredThisWeek": "Esta semana"
+    "featuredThisWeek": "Esta semana",
+    "clearSearch": "Borrar búsqueda"
   },
   "tutorPublicProfile": {
     "backToTutors": "Volver a profesores",
@@ -1720,5 +1761,140 @@
     "updated": "Contraseña actualizada",
     "linkExpired": "El enlace ha caducado o se abrió en otro dispositivo. Pide uno nuevo.",
     "requestNewLink": "Pedir un enlace nuevo"
+  },
+  "privacyPolicyPage": {
+    "badge": "Legal",
+    "title": "Política de privacidad",
+    "lastUpdated": "Última actualización: 24 de marzo de 2026.",
+    "sections": [
+      {
+        "title": "1. Información que recopilamos",
+        "paragraphs": [
+          "Recopilamos datos que nos proporcionas al crear una cuenta, contratar clases o contactar soporte, como nombre, correo electrónico y datos de perfil.",
+          "También recopilamos información técnica básica para operar la plataforma, como identificadores de sesión, dispositivo y métricas de uso."
+        ]
+      },
+      {
+        "title": "2. Uso de la información",
+        "paragraphs": [
+          "Usamos tus datos para prestar el servicio, gestionar reservas, procesar pagos, mejorar la experiencia y enviarte comunicaciones relacionadas con tu cuenta.",
+          "No utilizamos tus datos para finalidades incompatibles con la prestación del servicio sin informarte previamente."
+        ]
+      },
+      {
+        "title": "3. Compartición de datos",
+        "paragraphs": [
+          "Podemos compartir datos con proveedores que nos ayudan a operar la plataforma, por ejemplo servicios de autenticación, infraestructura y pagos.",
+          "Exigimos a dichos proveedores medidas adecuadas de seguridad y confidencialidad."
+        ]
+      },
+      {
+        "title": "4. Conservación y seguridad",
+        "paragraphs": [
+          "Conservamos los datos durante el tiempo necesario para cumplir las finalidades descritas y obligaciones legales aplicables.",
+          "Aplicamos medidas técnicas y organizativas razonables para proteger tu información frente a accesos no autorizados, pérdida o alteración."
+        ]
+      },
+      {
+        "title": "5. Tus derechos",
+        "paragraphs": [
+          "Puedes solicitar acceso, rectificación, eliminación, limitación u oposición al tratamiento de tus datos, así como la portabilidad cuando corresponda.",
+          "Para ejercer tus derechos, contáctanos en info@freetimeclasses.com."
+        ]
+      },
+      {
+        "title": "6. Cambios en esta política",
+        "paragraphs": [
+          "Podemos actualizar esta política para reflejar cambios legales o funcionales de la plataforma.",
+          "Publicaremos la versión vigente en esta página indicando la fecha de última actualización."
+        ]
+      }
+    ]
+  },
+  "termsOfServicePage": {
+    "badge": "Legal",
+    "title": "Términos de servicio",
+    "lastUpdated": "Última actualización: 24 de marzo de 2026.",
+    "sections": [
+      {
+        "title": "1. Aceptación de los términos",
+        "paragraphs": [
+          "Al registrarte o usar Free Time Classes, aceptas estos términos de servicio y nuestras políticas publicadas en la plataforma.",
+          "Si no estás de acuerdo con alguno de estos términos, debes abstenerte de utilizar el servicio."
+        ]
+      },
+      {
+        "title": "2. Uso de la plataforma",
+        "paragraphs": [
+          "Te comprometes a usar la plataforma de forma lícita, respetuosa y conforme a la normativa aplicable.",
+          "No está permitido publicar contenido fraudulento, ofensivo o que infrinja derechos de terceros."
+        ]
+      },
+      {
+        "title": "3. Cuentas y acceso",
+        "paragraphs": [
+          "Eres responsable de mantener la confidencialidad de tus credenciales y de la actividad realizada desde tu cuenta.",
+          "Podemos suspender o limitar cuentas que incumplan estos términos o representen un riesgo para la comunidad."
+        ]
+      },
+      {
+        "title": "4. Reservas, pagos y cancelaciones",
+        "paragraphs": [
+          "Las condiciones de pago, reembolso y cancelación pueden variar según el tipo de clase o servicio contratado.",
+          "Antes de confirmar una reserva, revisa los importes, fechas y políticas específicas aplicables."
+        ]
+      },
+      {
+        "title": "5. Propiedad intelectual",
+        "paragraphs": [
+          "Los contenidos, marcas, diseño y materiales de la plataforma son propiedad de Free Time Classes o de sus respectivos titulares.",
+          "No se autoriza su reproducción, distribución o uso comercial sin autorización previa."
+        ]
+      },
+      {
+        "title": "6. Limitación de responsabilidad",
+        "paragraphs": [
+          "Hacemos esfuerzos razonables para mantener la disponibilidad y calidad del servicio, pero no garantizamos ausencia total de interrupciones.",
+          "En la medida permitida por la ley, no seremos responsables por daños indirectos derivados del uso de la plataforma."
+        ]
+      },
+      {
+        "title": "7. Modificaciones",
+        "paragraphs": [
+          "Podemos actualizar estos términos para adaptarlos a cambios legales, técnicos o del servicio.",
+          "La versión vigente estará disponible en esta página e incluirá su fecha de actualización."
+        ]
+      }
+    ]
+  },
+  "contactPage": {
+    "badge": "Contacto",
+    "title": "¿Cómo te <em>ayudamos</em> hoy?",
+    "intro": "Consulta las preguntas frecuentes o escríbenos por correo o desde los mensajes de la plataforma.",
+    "faqTitle": "Preguntas frecuentes",
+    "faq": [
+      {
+        "category": "Contacto",
+        "question": "¿Cómo puedo resolver una duda sobre pagos o clases?",
+        "answer": "Escríbenos a info@freetimeclasses.com y te responderemos lo antes posible."
+      },
+      {
+        "category": "Clases",
+        "question": "¿Puedo cambiar de tutor durante un curso?",
+        "answer": "Depende del curso y la disponibilidad. Escríbenos y revisamos tu caso."
+      },
+      {
+        "category": "Cuenta",
+        "question": "¿Cómo cambio mi correo o contraseña?",
+        "answer": "Desde Configuración puedes actualizar tus datos personales y la seguridad de tu cuenta."
+      }
+    ],
+    "stillNeedHelp": "¿Sigues necesitando ayuda?",
+    "stillNeedHelpBody": "Escríbenos por correo o abre una conversación con tu tutor u otros usuarios desde Mensajes.",
+    "emailCta": "Escribir por correo",
+    "messagesCta": "Ir a mensajes",
+    "tutorTitle": "¿Eres tutor?",
+    "tutorBody": "Gestiona tus cursos, disponibilidad y perfil desde el panel de tutor.",
+    "tutorCta": "Ir al panel de tutor"
   }
 }

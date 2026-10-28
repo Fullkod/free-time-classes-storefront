@@ -1062,7 +1062,7 @@ export default function TutorDashboardClient({
                             <div className="min-w-0">
                               {isCurrent ? (
                                 <span className="mb-1 inline-block rounded-full bg-ft-ink px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-                                  En vivo
+                                  {t("liveBadge")}
                                 </span>
                               ) : null}
                               <p className="text-xs font-semibold text-ft-ink">
@@ -1172,15 +1172,14 @@ export default function TutorDashboardClient({
 
             <Card className="border-ft-line-soft">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Tip del Mentor</CardTitle>
+                <CardTitle className="text-lg">{t("mentorTipTitle")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm italic text-slate-600">
-                  &quot;Recuerda enviar materiales de apoyo al menos 24 horas antes para mejorar el
-                  engagement en tus clases.&quot;
+                  &quot;{t("mentorTipBody")}&quot;
                 </p>
                 <Button variant="ghost" className="w-full justify-center text-ft-ink">
-                  Ver mas consejos
+                  {t("moreTips")}
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </CardContent>

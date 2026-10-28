@@ -23,8 +23,8 @@ export function FreetimeFooter() {
       links: [
         { href: `/${locale}/about`, label: t("aboutUs") },
         { href: `/${locale}/contact`, label: t("contact") },
-        { href: `/${locale}/privacy-policy`, label: "Privacidad" },
-        { href: `/${locale}/terms-of-service`, label: "Términos" },
+        { href: `/${locale}/privacy-policy`, label: t("footerPrivacy") },
+        { href: `/${locale}/terms-of-service`, label: t("footerTerms") },
       ],
     },
   ];
@@ -76,7 +76,7 @@ export function FreetimeFooter() {
             © {year} Free Time Classes. {t("allRightsReserved")}
           </p>
           <p className="font-instrument-serif text-[14px] italic text-ft-ink-3">
-            Aprender en los huecos de la vida.
+            {t("footerTagline")}
           </p>
         </div>
       </div>

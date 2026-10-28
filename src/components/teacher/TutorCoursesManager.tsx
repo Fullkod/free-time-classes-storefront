@@ -693,7 +693,7 @@ export default function TutorCoursesManager({
               <div className="space-y-4 p-5">
                 <div className="flex items-center justify-between">
                   <span className="rounded-ft-xs bg-ft-accent-soft px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-ft-accent-deep">
-                    Preview
+                    {t("previewBadge")}
                   </span>
                   <span className="text-lg font-bold text-ft-ink">
                     {createForm.price || "0"}€
@@ -718,12 +718,9 @@ export default function TutorCoursesManager({
             <div className="rounded-ft-lg border border-ft-line bg-ft-surface-1/60 p-5 shadow-none">
               <p className="mb-2 flex items-center gap-2 text-sm font-bold text-ft-ink">
                 <Sparkles className="h-4 w-4 text-ft-accent-deep" />
-                Consejo editorial
+                {t("editorialTipTitle")}
               </p>
-              <p className="text-xs leading-relaxed text-ft-ink-3">
-                Los cursos con una descripcion clara y objetivos concretos suelen
-                convertir mejor.
-              </p>
+              <p className="text-xs leading-relaxed text-ft-ink-3">{t("editorialTipBody")}</p>
             </div>
           </div>
         </aside>
@@ -1197,7 +1194,7 @@ export default function TutorCoursesManager({
             <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-ft-paper/20">
               <CheckCircle2 className="h-8 w-8" />
             </div>
-            <h3 className="text-2xl font-extrabold tracking-tight">{t("publishedTitle")}</h3>
+            <DialogTitle className="text-2xl font-extrabold tracking-tight">{t("publishedTitle")}</DialogTitle>
             <p className="mt-2 text-sm text-ft-paper/80">
               {hasAgenda === false ? t("publishedNoAgenda") : t("publishedBody")}
             </p>

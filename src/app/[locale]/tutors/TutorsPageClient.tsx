@@ -278,7 +278,7 @@ export default function TutorsPageClient({
                 <button
                   onClick={() => setSearchQuery("")}
                   className="flex-shrink-0 text-ft-ink-3 transition-colors hover:text-ft-ink"
-                  aria-label="Clear"
+                  aria-label={t("clearSearch")}
                 >
                   <X width={16} height={16} />
                 </button>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { ArrowRight, MessageCircle, Sparkles } from "lucide-react";
 
 import { buildPageMetadata } from "@/lib/seo/page-metadata";
@@ -20,26 +20,6 @@ export async function generateMetadata({
   });
 }
 
-const faqItems = [
-  {
-    category: "Contacto",
-    question: "¿Cómo puedo resolver una duda sobre pagos o clases?",
-    answer:
-      "Escríbenos a info@freetimeclasses.com y te responderemos lo antes posible.",
-  },
-  {
-    category: "Clases",
-    question: "¿Puedo cambiar de tutor durante un curso?",
-    answer:
-      "Depende del curso y la disponibilidad. Escríbenos y revisamos tu caso.",
-  },
-  {
-    category: "Cuenta",
-    question: "¿Cómo cambio mi correo o contraseña?",
-    answer:
-      "Desde Configuración puedes actualizar tus datos personales y la seguridad de tu cuenta.",
-  },
-];
 
 export default async function ContactPage({
   params,
@@ -47,6 +27,9 @@ export default async function ContactPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  unstable_setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "contactPage" });
+  const faqItems = t.raw("faq") as Array<{ category: string; question: string; answer: string }>;
 
   return (
     <main className="mx-auto w-full max-w-screen-xl px-5 pb-16 pt-10 md:px-9 md:pb-20 md:pt-14 lg:pt-20">
@@ -54,25 +37,24 @@ export default async function ContactPage({
         <div className="max-w-4xl">
           <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-ft-surface-2 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-ft-accent-deep">
             <Sparkles width={11} height={11} />
-            Contacto
+            {t("badge")}
           </p>
           <h1 className="m-0 text-balance text-[36px] font-semibold leading-[1.05] tracking-[-0.03em] text-ft-ink md:text-[48px] lg:text-[60px]">
-            ¿Cómo te{" "}
-            <span className="font-instrument-serif italic text-ft-accent-deep">
-              ayudamos
-            </span>{" "}
-            hoy?
+            {t.rich("title", {
+              em: (chunks) => (
+                <span className="font-instrument-serif italic text-ft-accent-deep">{chunks}</span>
+              ),
+            })}
           </h1>
           <p className="mt-4 max-w-3xl text-[14px] leading-relaxed text-ft-ink-2 md:text-[16px] lg:text-[17px]">
-            Consulta las preguntas frecuentes o escríbenos por correo o desde
-            los mensajes de la plataforma.
+            {t("intro")}
           </p>
         </div>
       </section>
 
       <section className="mb-12 md:mb-16">
         <h2 className="m-0 mb-6 text-[24px] font-semibold tracking-[-0.025em] text-ft-ink md:mb-8 md:text-[32px]">
-          Preguntas frecuentes
+          {t("faqTitle")}
         </h2>
 
         <div className="grid gap-3 md:grid-cols-2 md:gap-4">
@@ -108,12 +90,11 @@ export default async function ContactPage({
           <div>
             <h2 className="m-0 text-[24px] font-semibold tracking-[-0.025em] md:text-[34px]">
               <span className="font-instrument-serif italic">
-                ¿Sigues necesitando ayuda?
+                {t("stillNeedHelp")}
               </span>
             </h2>
             <p className="mt-3 max-w-2xl text-[13.5px] text-white/70 md:text-[15px]">
-              Escríbenos por correo o abre una conversación con tu tutor u
-              otros usuarios desde Mensajes.
+              {t("stillNeedHelpBody")}
             </p>
           </div>
 
@@ -123,13 +104,13 @@ export default async function ContactPage({
               className="inline-flex items-center justify-center gap-2 rounded-full bg-ft-accent px-6 py-3 text-[13px] font-semibold text-[#1a1410] transition-colors hover:brightness-95"
             >
               <MessageCircle className="h-4 w-4" />
-              Escribir por correo
+              {t("emailCta")}
             </a>
             <Link
               href={`/${locale}/messages`}
               className="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-[13px] font-semibold text-ft-paper transition-colors hover:bg-white/10"
             >
-              Ir a mensajes
+              {t("messagesCta")}
             </Link>
           </div>
         </div>
@@ -138,17 +119,16 @@ export default async function ContactPage({
       <section className="mt-8 md:mt-10">
         <article className="rounded-ft-lg border border-ft-line bg-ft-surface-1 p-5 md:p-7">
           <h3 className="m-0 text-[16px] font-semibold tracking-tight text-ft-ink md:text-[18px]">
-            Eres tutor
+            {t("tutorTitle")}
           </h3>
           <p className="mt-2 text-[13.5px] text-ft-ink-2">
-            Gestiona tus cursos, disponibilidad y perfil desde el panel de
-            tutor.
+            {t("tutorBody")}
           </p>
           <Link
             href={`/${locale}/tutor/dashboard`}
             className="mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-ft-ink hover:text-ft-accent-deep"
           >
-            Ir al panel de tutor
+            {t("tutorCta")}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </article>

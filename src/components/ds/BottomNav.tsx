@@ -2,6 +2,7 @@
 
 import { Calendar, Compass, Home, MessageCircle, User } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useTranslations } from "@/i18n/translations";
 import { cn } from "@/lib/utils";
 
 export type BottomNavTab = "home" | "explore" | "classes" | "messages" | "profile";
@@ -12,15 +13,16 @@ interface BottomNavProps {
   className?: string;
 }
 
-const ITEMS: ReadonlyArray<{ id: BottomNavTab; label: string; icon: LucideIcon }> = [
-  { id: "home", label: "Inicio", icon: Home },
-  { id: "explore", label: "Explorar", icon: Compass },
-  { id: "classes", label: "Clases", icon: Calendar },
-  { id: "messages", label: "Chat", icon: MessageCircle },
-  { id: "profile", label: "Tú", icon: User },
+const ITEMS: ReadonlyArray<{ id: BottomNavTab; icon: LucideIcon }> = [
+  { id: "home", icon: Home },
+  { id: "explore", icon: Compass },
+  { id: "classes", icon: Calendar },
+  { id: "messages", icon: MessageCircle },
+  { id: "profile", icon: User },
 ];
 
 export function BottomNav({ active, onChange, className }: BottomNavProps) {
+  const t = useTranslations("navbar.bottomNav");
   return (
     <nav
       className={cn(
@@ -54,7 +56,7 @@ export function BottomNav({ active, onChange, className }: BottomNavProps) {
                 isActive ? "font-semibold" : "font-medium"
               )}
             >
-              {item.label}
+              {t(item.id)}
             </span>
             {isActive && (
               <span className="absolute -top-2.5 h-0.5 w-[18px] rounded-ft-xs bg-ft-accent" />

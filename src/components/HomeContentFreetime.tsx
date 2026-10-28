@@ -21,13 +21,13 @@ function resolveAvatar(pic: string): string {
   return getPublicUrl("avatars", trimmed);
 }
 
-const CATEGORIES: ReadonlyArray<{ id: string; label: string; count: string; hue: string }> = [
-  { id: "idiomas", label: "Idiomas", count: "412", hue: "#C9A86A" },
-  { id: "musica", label: "Música", count: "184", hue: "#B89B5E" },
-  { id: "cocina", label: "Cocina", count: "96", hue: "#D4B57A" },
-  { id: "tech", label: "Tecnología", count: "273", hue: "#A8895A" },
-  { id: "arte", label: "Arte & Diseño", count: "158", hue: "#C8AB6E" },
-  { id: "bienestar", label: "Bienestar", count: "122", hue: "#D9BD83" },
+const CATEGORIES: ReadonlyArray<{ id: string; count: string; hue: string }> = [
+  { id: "languages", count: "412", hue: "#C9A86A" },
+  { id: "music", count: "184", hue: "#B89B5E" },
+  { id: "cooking", count: "96", hue: "#D4B57A" },
+  { id: "tech", count: "273", hue: "#A8895A" },
+  { id: "art", count: "158", hue: "#C8AB6E" },
+  { id: "wellbeing", count: "122", hue: "#D9BD83" },
 ];
 
 interface HomeContentProps {
@@ -182,10 +182,10 @@ export default function HomeContentFreetime({
                 </div>
                 <div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ft-accent-soft">
-                    En vivo
+                    {t("liveBadge")}
                   </div>
                   <div className="mt-0.5 text-[13px] font-medium text-ft-paper">
-                    Inglés · 5 min
+                    {t("liveSample")}
                   </div>
                 </div>
               </div>
@@ -208,10 +208,10 @@ export default function HomeContentFreetime({
                   className="mb-2.5 grid h-7 w-7 place-items-center rounded-ft-xs text-[13px] font-semibold text-[#1a1410]"
                   style={{ background: c.hue }}
                 >
-                  {c.label[0]}
+                  {t(`categories.${c.id}`)[0]}
                 </div>
                 <div className="text-[13px] font-semibold tracking-tight text-ft-ink">
-                  {c.label}
+                  {t(`categories.${c.id}`)}
                 </div>
                 <div className="mt-0.5 text-[11px] text-ft-ink-3">
                   {c.count} {t("coursesText")}

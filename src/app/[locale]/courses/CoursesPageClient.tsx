@@ -283,7 +283,7 @@ export default function CoursesPageClient({
                     setQueryFilters((p) => ({ ...p, search: "" }))
                   }
                   className="flex-shrink-0 text-ft-ink-3 transition-colors hover:text-ft-ink"
-                  aria-label="Clear"
+                  aria-label={tCat("clearSearch")}
                 >
                   <X width={16} height={16} />
                 </button>

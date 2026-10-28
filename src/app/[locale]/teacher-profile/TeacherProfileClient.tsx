@@ -166,7 +166,7 @@ export default function TeacherProfileClient({
                   <div className="mb-2 flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-ft-paper px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-ft-accent-deep">
                       <Sparkles className="h-3 w-3" />
-                      Pro Mentor
+                      {t("proMentorBadge")}
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-ft-paper px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-ft-ink">
                       <Star
@@ -328,7 +328,7 @@ export default function TeacherProfileClient({
 
                   <section className="rounded-ft-lg border border-ft-line-soft bg-ft-paper p-5">
                     <h2 className="m-0 text-[15px] font-semibold tracking-tight text-ft-ink">
-                      Expertise
+                      {t("expertiseTitle")}
                     </h2>
                     <p className="mt-1 text-[12px] text-ft-ink-3">
                       Áreas donde destacas como tutor.
@@ -396,7 +396,7 @@ export default function TeacherProfileClient({
                       fill="currentColor"
                       stroke="none"
                     />
-                    Reviews
+                    {t("reviewsTitle")}
                   </h2>
                   <TutorReviewsSection />
                 </section>

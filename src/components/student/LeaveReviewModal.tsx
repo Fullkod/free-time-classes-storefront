@@ -30,13 +30,10 @@ export default function LeaveReviewModal(props: {
   const [selectedHighlights, setSelectedHighlights] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const MAX_COMMENT_LENGTH = 500;
-  const highlightOptions = [
-    "Preciso",
-    "Constructivo",
-    "Inspirador",
-    "Experto",
-    "Puntual",
-  ];
+  // Stored inside the comment text, in the reviewer's language.
+  const highlightOptions = (["precise", "constructive", "inspiring", "expert", "punctual"] as const).map(
+    (key) => t(`reviewHighlights.${key}`)
+  );
 
   const isReady = useMemo(
     () =>
@@ -150,7 +147,7 @@ export default function LeaveReviewModal(props: {
 
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-ft-ink-3">
-              Lo que más destacó
+              {t("reviewHighlightsTitle")}
             </div>
             <div className="flex flex-wrap gap-2">
               {highlightOptions.map((option) => {
