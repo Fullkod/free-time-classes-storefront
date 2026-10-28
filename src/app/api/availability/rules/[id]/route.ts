@@ -13,6 +13,93 @@ const noStoreJson = (body: unknown, init?: ResponseInit) =>
 
 type RouteContext = { params: Promise<{ id: string }> };
 
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d(:00)?$/;
+const normalizeTime = (v: string) => (v.length === 5 ? `${v}:00` : v);
+
+type PatchBody = {
+  day_of_week?: number;
+  start_time?: string;
+  end_time?: string;
+  is_active?: boolean;
+};
+
+/** Edit a weekly window or pause/resume it (F086). Open times follow at once. */
+export async function PATCH(request: NextRequest, context: RouteContext) {
+  try {
+    const { id: ruleId } = await context.params;
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return noStoreJson({ error: "Unauthorized." }, { status: 401 });
+    }
+
+    let body: PatchBody;
+    try {
+      body = (await request.json()) as PatchBody;
+    } catch {
+      return noStoreJson({ error: "Invalid JSON." }, { status: 400 });
+    }
+
+    const { data: rule, error: ruleError } = await supabase
+      .from("tutor_availability")
+      .select("id, tutor_id, day_of_week, start_time, end_time, is_active")
+      .eq("id", ruleId)
+      .maybeSingle();
+    if (ruleError || !rule || rule.tutor_id !== user.id) {
+      return noStoreJson({ error: "Rule not found." }, { status: 404 });
+    }
+
+    const next = {
+      day_of_week: body.day_of_week ?? rule.day_of_week,
+      start_time: typeof body.start_time === "string" ? body.start_time.trim() : rule.start_time,
+      end_time: typeof body.end_time === "string" ? body.end_time.trim() : rule.end_time,
+      is_active: body.is_active ?? rule.is_active,
+    };
+    if (
+      !Number.isInteger(next.day_of_week) ||
+      next.day_of_week < 0 ||
+      next.day_of_week > 6 ||
+      !TIME_RE.test(next.start_time) ||
+      !TIME_RE.test(next.end_time) ||
+      normalizeTime(next.end_time) <= normalizeTime(next.start_time) ||
+      typeof next.is_active !== "boolean"
+    ) {
+      return noStoreJson({ error: "Invalid payload." }, { status: 400 });
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceRoleKey) {
+      return noStoreJson({ error: "Server misconfigured." }, { status: 500 });
+    }
+    const admin = createSupabaseAdminClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false },
+    });
+    const { error: updateError } = await admin
+      .from("tutor_availability")
+      .update({
+        day_of_week: next.day_of_week,
+        start_time: normalizeTime(next.start_time),
+        end_time: normalizeTime(next.end_time),
+        is_active: next.is_active,
+      })
+      .eq("id", ruleId)
+      .eq("tutor_id", user.id);
+    if (updateError) {
+      console.error("[availability/rules PATCH] update failed:", updateError);
+      return noStoreJson({ error: "Could not update rule." }, { status: 400 });
+    }
+
+    return noStoreJson({ ok: true }, { status: 200 });
+  } catch (err) {
+    console.error("[availability/rules PATCH] error:", err);
+    return noStoreJson({ error: "Unexpected server error." }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const { id: ruleId } = await context.params;

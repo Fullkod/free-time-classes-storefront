@@ -87,6 +87,14 @@ export default function RecurringAvailabilityManager({
   );
   const [deletingException, setDeletingException] = useState(false);
 
+  const [editingRule, setEditingRule] = useState<{
+    id: string;
+    day_of_week: string;
+    start_time: string;
+    end_time: string;
+  } | null>(null);
+  const [ruleUpdatingId, setRuleUpdatingId] = useState<string | null>(null);
+
   const loadData = useCallback(async () => {
     const supabase = createClient();
     try {
@@ -179,6 +187,30 @@ export default function RecurringAvailabilityManager({
   const openDeleteRuleDialog = (id: string) => {
     setDeleteRuleId(id);
     setDeleteRuleDialogOpen(true);
+  };
+
+  const updateRule = async (
+    id: string,
+    patch: { day_of_week?: number; start_time?: string; end_time?: string; is_active?: boolean }
+  ) => {
+    try {
+      setRuleUpdatingId(id);
+      const res = await fetch(`/api/availability/rules/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      toast.success(t("ruleUpdated"));
+      setEditingRule(null);
+      onChanged?.();
+      await loadData();
+    } catch (err) {
+      console.error("[RecurringAvailabilityManager] update failed:", err);
+      toast.error(t("ruleUpdateError"));
+    } finally {
+      setRuleUpdatingId(null);
+    }
   };
 
   const performDeleteRule = async () => {
@@ -415,27 +447,119 @@ export default function RecurringAvailabilityManager({
 
           {rules.length > 0 && (
             <ul className="divide-y divide-ft-line rounded-ft border border-ft-line text-sm text-ft-ink-2">
-              {rules.map((r) => (
-                <li
-                  key={r.id}
-                  className="flex flex-wrap items-center justify-between gap-2 px-3 py-2"
-                >
-                  <span>
-                    <span className="font-medium">{weekdayLabel(r.day_of_week)}</span>
-                    {" · "}
-                    {formatTimeHm(r.start_time)}–{formatTimeHm(r.end_time)}
-                  </span>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openDeleteRuleDialog(r.id)}
-                    className={FT_BTN_OUTLINE}
+              {rules.map((r) =>
+                editingRule?.id === r.id ? (
+                  <li key={r.id} className="grid gap-2 px-3 py-3 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
+                    <SelectMenu
+                      id={`ra-edit-day-${r.id}`}
+                      value={editingRule.day_of_week}
+                      onValueChange={(day_of_week) =>
+                        setEditingRule((p) => (p ? { ...p, day_of_week } : p))
+                      }
+                      options={weekdayMenuOptions}
+                      aria-label={t("weekday")}
+                      triggerClassName={raSelectTrigger}
+                    />
+                    <Input
+                      type="time"
+                      aria-label={t("windowStart")}
+                      value={editingRule.start_time}
+                      onChange={(e) =>
+                        setEditingRule((p) => (p ? { ...p, start_time: e.target.value } : p))
+                      }
+                      className={FT_FIELD}
+                    />
+                    <Input
+                      type="time"
+                      aria-label={t("windowEnd")}
+                      value={editingRule.end_time}
+                      onChange={(e) =>
+                        setEditingRule((p) => (p ? { ...p, end_time: e.target.value } : p))
+                      }
+                      className={FT_FIELD}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={ruleUpdatingId === r.id}
+                        onClick={() =>
+                          void updateRule(r.id, {
+                            day_of_week: Number(editingRule.day_of_week),
+                            start_time: editingRule.start_time,
+                            end_time: editingRule.end_time,
+                          })
+                        }
+                        className={FT_BTN_PRIMARY}
+                      >
+                        {ruleUpdatingId === r.id ? t("saving") : t("save")}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditingRule(null)}
+                        className={FT_BTN_OUTLINE}
+                      >
+                        {t("cancel")}
+                      </Button>
+                    </div>
+                  </li>
+                ) : (
+                  <li
+                    key={r.id}
+                    className="flex flex-wrap items-center justify-between gap-2 px-3 py-2"
                   >
-                    {t("remove")}
-                  </Button>
-                </li>
-              ))}
+                    <span className={cn(!r.is_active && "text-ft-ink-3 line-through")}>
+                      <span className="font-medium">{weekdayLabel(r.day_of_week)}</span>
+                      {" · "}
+                      {formatTimeHm(r.start_time)}–{formatTimeHm(r.end_time)}
+                    </span>
+                    {!r.is_active && (
+                      <span className="rounded-full bg-ft-surface-2 px-2 py-0.5 text-[11px] font-semibold text-ft-ink-2">
+                        {t("paused")}
+                      </span>
+                    )}
+                    <div className="ml-auto flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setEditingRule({
+                            id: r.id,
+                            day_of_week: String(r.day_of_week),
+                            start_time: formatTimeHm(r.start_time),
+                            end_time: formatTimeHm(r.end_time),
+                          })
+                        }
+                        className={FT_BTN_OUTLINE}
+                      >
+                        {t("edit")}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={ruleUpdatingId === r.id}
+                        onClick={() => void updateRule(r.id, { is_active: !r.is_active })}
+                        className={FT_BTN_OUTLINE}
+                      >
+                        {r.is_active ? t("pause") : t("resume")}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDeleteRuleDialog(r.id)}
+                        className={FT_BTN_OUTLINE}
+                      >
+                        {t("remove")}
+                      </Button>
+                    </div>
+                  </li>
+                )
+              )}
             </ul>
           )}
         </CardContent>

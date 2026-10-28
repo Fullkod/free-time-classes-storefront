@@ -912,7 +912,15 @@
       "exceptionDeleted": "Exception deleted.",
       "exceptionSaveError": "Could not save the exception.",
       "exceptionDeleteError": "Could not delete the exception.",
-      "needZoneFirst": "Confirm your time zone before adding times to your agenda."
+      "needZoneFirst": "Confirm your time zone before adding times to your agenda.",
+      "edit": "Edit",
+      "pause": "Pause",
+      "resume": "Resume",
+      "paused": "Paused",
+      "save": "Save",
+      "cancel": "Cancel",
+      "ruleUpdated": "Window updated",
+      "ruleUpdateError": "Could not update the window"
     },
     "addAvailabilityModal": {
       "title": "Add Availability",

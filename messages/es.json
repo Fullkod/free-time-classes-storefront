@@ -912,7 +912,15 @@
       "exceptionDeleted": "Excepción eliminada.",
       "exceptionSaveError": "No se pudo guardar la excepción.",
       "exceptionDeleteError": "No se pudo eliminar la excepción.",
-      "needZoneFirst": "Confirma tu zona horaria para añadir horas a tu agenda."
+      "needZoneFirst": "Confirma tu zona horaria para añadir horas a tu agenda.",
+      "edit": "Editar",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "paused": "En pausa",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "ruleUpdated": "Franja actualizada",
+      "ruleUpdateError": "No se pudo actualizar la franja"
     },
     "addAvailabilityModal": {
       "title": "Añadir Disponibilidad",
