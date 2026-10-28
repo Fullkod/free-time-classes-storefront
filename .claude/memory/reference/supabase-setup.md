@@ -12,7 +12,7 @@ tampoco sirve); usar el CLI con `env -u SUPABASE_ACCESS_TOKEN supabase db query 
 `next/headers`, solo route handlers/server), `server-public.ts` (lecturas publicas en server), `queries/` (cliente)
 y `server-queries/` (server).
 
-**Migraciones:** `supabase/migrations/NNN_descripcion.sql`, numeracion secuencial; la ultima es `043_bookings_status_expired.sql` (todas aplicadas en prod). Patron: probar en seco con `begin; ...; rollback;`, simular RLS con `set local role authenticated` + `request.jwt.claims`, y si una migracion restringe algo que el codigo desplegado aun usa, aplicarla DESPUES del deploy.
+**Migraciones:** `supabase/migrations/NNN_descripcion.sql`, numeracion secuencial; la ultima es `044_whatsapp_opt_in.sql` (todas aplicadas en prod). Patron: probar en seco con `begin; ...; rollback;`, simular RLS con `set local role authenticated` + `request.jwt.claims`, y si una migracion restringe algo que el codigo desplegado aun usa, aplicarla DESPUES del deploy.
 Hay dos `019_*` (prefijo duplicado historico, no renombrar). El esquema real difiere del SQL de
 `docs/proyecto-maestro.md` §4 (ej. ids, `scheduled_date_time`, conversaciones): fiarse de las migraciones / MCP.
 

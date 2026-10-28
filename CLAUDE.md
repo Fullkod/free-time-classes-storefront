@@ -70,7 +70,7 @@ src/
 ├── types/                 # Tipos del dominio
 └── i18n/
 messages/es.json, messages/en.json   # TODOS los textos de UI
-supabase/migrations/NNN_descripcion.sql   # Migraciones numeradas (siguiente: 044)
+supabase/migrations/NNN_descripcion.sql   # Migraciones numeradas (siguiente: 045)
 src/middleware.ts          # next-intl + sesion Supabase + proteccion por rol (is_student / is_tutor)
 ```
 
