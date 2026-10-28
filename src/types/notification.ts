@@ -4,6 +4,7 @@ export type NotificationType =
   | "booking_confirmed"
   | "booking_rejected"
   | "booking_cancelled"
+  | "booking_expired"
   | "message_received";
 
 export interface Notification {

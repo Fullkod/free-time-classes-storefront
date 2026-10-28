@@ -29,6 +29,7 @@ function IconByType({ type }: { type: NotificationType }) {
     case "booking_rejected":
       return <XCircle className="h-4 w-4" />;
     case "booking_cancelled":
+    case "booking_expired":
       return <CalendarX2 className="h-4 w-4" />;
     case "message_received":
       return <MessageCircle className="h-4 w-4" />;
@@ -44,6 +45,7 @@ function iconTone(type: NotificationType): string {
     case "booking_rejected":
       return "bg-red-50 text-red-700";
     case "booking_cancelled":
+    case "booking_expired":
       return "bg-amber-50 text-amber-700";
     case "booking_request":
     case "booking_custom_request":
@@ -74,6 +76,7 @@ function getNotificationHref(n: Notification, locale: string): string {
     case "booking_confirmed":
     case "booking_rejected":
     case "booking_cancelled":
+    case "booking_expired":
       return `/${locale}/bookings`;
     case "message_received":
       return `/${locale}/messages`;

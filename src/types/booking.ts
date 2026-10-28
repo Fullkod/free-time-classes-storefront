@@ -4,7 +4,8 @@ export type BookingStatus =
   | "confirmed"
   | "rejected"
   | "cancelled"
-  | "completed";
+  | "completed"
+  | "expired";
 
 export interface Booking {
   id: number; // Serial primary key

@@ -1303,6 +1303,7 @@
     "statusRejected": "Rejected",
     "statusCancelled": "Cancelled",
     "statusCompleted": "Completed",
+    "statusExpired": "Expired",
     "tutor": "Tutor",
     "student": "Student",
     "date": "Date",

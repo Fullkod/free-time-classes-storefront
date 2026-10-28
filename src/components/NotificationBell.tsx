@@ -36,6 +36,7 @@ function notifIcon(type: NotificationType) {
     case "booking_rejected":
       return <XCircle className="h-4 w-4 text-red-500" />;
     case "booking_cancelled":
+    case "booking_expired":
       return <CalendarX2 className="h-4 w-4 text-amber-500" />;
     case "message_received":
       return <MessageCircle className="h-4 w-4 text-sky-600" />;
@@ -52,6 +53,7 @@ function getNotificationHref(n: Notification, locale: string): string {
     case "booking_confirmed":
     case "booking_rejected":
     case "booking_cancelled":
+    case "booking_expired":
       return `/${locale}/bookings`;
     case "message_received":
       return `/${locale}/messages`;

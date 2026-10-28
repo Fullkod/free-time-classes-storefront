@@ -12,10 +12,8 @@ import {
   startOfTodayAsLessonTimestamp,
   endOfTodayAsLessonTimestamp,
   startOfMonthAsLessonTimestamp,
-  nowPlusMinutesAsLessonTimestamp,
 } from "@/lib/datetime/lessonTime";
-
-const CUSTOM_REQUEST_EXPIRY_MINUTES = 15;
+import { isPendingExpired } from "@/lib/bookings/pendingExpiry";
 
 type PendingBookingItem = {
   booking: Booking;
@@ -117,7 +115,6 @@ export default async function TutorDashboardPage({
     redirect(`/${locale}/dashboard`);
   }
 
-  const expiryCutoff = nowPlusMinutesAsLessonTimestamp(CUSTOM_REQUEST_EXPIRY_MINUTES);
   const allPending = (pendingRes.data ?? []) as Booking[];
 
   const slotBookings = allPending.filter(
@@ -127,7 +124,10 @@ export default async function TutorDashboardPage({
     (booking) =>
       booking.lesson_id == null &&
       typeof booking.requested_scheduled_date_time === "string" &&
-      booking.requested_scheduled_date_time >= expiryCutoff &&
+      !isPendingExpired({
+        created_at: booking.created_at,
+        start: booking.requested_scheduled_date_time,
+      }) &&
       typeof booking.requested_subject_id === "number"
   );
 
@@ -188,14 +188,25 @@ export default async function TutorDashboardPage({
           ? subjectNameById.get(booking.requested_subject_id) ?? null
           : null,
     })),
-    ...slotBookings.map((booking) => ({
-      booking,
-      studentName: studentNameById.get(booking.student_id) ?? null,
-      lesson:
-        typeof booking.lesson_id === "number"
-          ? lessonById.get(booking.lesson_id) ?? null
-          : null,
-    })),
+    // F014: hide requests already past their deadline (the next read or
+    // answer expires them).
+    ...slotBookings
+      .filter((booking) => {
+        const lesson =
+          typeof booking.lesson_id === "number" ? lessonById.get(booking.lesson_id) : null;
+        return !isPendingExpired({
+          created_at: booking.created_at,
+          start: lesson?.scheduled_date_time ?? null,
+        });
+      })
+      .map((booking) => ({
+        booking,
+        studentName: studentNameById.get(booking.student_id) ?? null,
+        lesson:
+          typeof booking.lesson_id === "number"
+            ? lessonById.get(booking.lesson_id) ?? null
+            : null,
+      })),
   ];
 
   const classesThisMonth = lessonsStatsRes.data?.length ?? 0;

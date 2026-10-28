@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { completeFinishedBookings } from "@/lib/bookings/completeFinished";
+import { expirePendingBookings } from "@/lib/bookings/expirePending";
 
 // Daily job (Vercel Cron, see vercel.json). Idempotent:
 // - pings Supabase so the free plan does not pause the project after 7 idle days;
+// - expires pending requests past their deadline (F014);
 // - marks confirmed bookings whose class already ended as completed;
 // - purges old WhatsApp inbound events.
 export const maxDuration = 60;
@@ -48,6 +50,11 @@ export async function GET(request: NextRequest) {
     failures.push({ ruleId: "keepalive-ping", error: pingError.message });
   }
 
+  const expiry = await expirePendingBookings(admin);
+  if (expiry.error) {
+    failures.push({ ruleId: "expire-pending", error: expiry.error });
+  }
+
   const completion = await completeFinishedBookings(admin);
   if (completion.error) {
     failures.push({ ruleId: "complete-bookings", error: completion.error });
@@ -72,6 +79,7 @@ export async function GET(request: NextRequest) {
   return noStoreJson(
     {
       ok: failures.length === 0,
+      bookingsExpired: expiry.bookingsExpired,
       bookingsCompleted: completion.bookingsCompleted,
       failures,
     },

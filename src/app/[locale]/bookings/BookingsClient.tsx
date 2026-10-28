@@ -26,6 +26,7 @@ import { StudentSidebarNav } from "@/components/ds/StudentSidebarNav";
 import { useAuth } from "@/context/UserContext";
 import { useTranslations } from "@/i18n/translations";
 import { isLessonInPast } from "@/lib/datetime/lessonTime";
+import { isPendingExpired } from "@/lib/bookings/pendingExpiry";
 import {
   lessonTimestampToDate,
   lessonTimestampToEpoch,
@@ -44,7 +45,8 @@ type BookingStatus =
   | "confirmed"
   | "rejected"
   | "cancelled"
-  | "completed";
+  | "completed"
+  | "expired";
 
 interface Booking {
   id: number;
@@ -83,6 +85,15 @@ function bookingStart(b: Booking): string | null {
   return b.lesson?.scheduled_date_time ?? b.requested_scheduled_date_time ?? null;
 }
 
+// F014: a pending request past its deadline is shown as expired even before
+// the server sweep stores it.
+function withExpiry(b: Booking): Booking {
+  return b.status === "pending" &&
+    isPendingExpired({ created_at: b.created_at, start: bookingStart(b) })
+    ? { ...b, status: "expired" }
+    : b;
+}
+
 function bookingSubjectName(b: Booking): string | null {
   return b.course?.title ?? b.lesson?.subject?.name ?? b.requested_subject?.name ?? null;
 }
@@ -97,6 +108,7 @@ const STATUS_LABEL_KEYS: Record<BookingStatus, string> = {
   rejected: "statusRejected",
   cancelled: "statusCancelled",
   completed: "statusCompleted",
+  expired: "statusExpired",
 };
 
 type Tab = "upcoming" | "past" | "cancelled";
@@ -178,7 +190,7 @@ export default function BookingsClient({ locale }: { locale: string }) {
           .limit(BOOKINGS_LIMIT);
 
         if (fetchError) throw fetchError;
-        setBookings((data as unknown as Booking[]) ?? []);
+        setBookings(((data as unknown as Booking[]) ?? []).map(withExpiry));
       } else {
         const { data, error: fetchError } = await supabase
           .from("bookings")
@@ -214,7 +226,7 @@ export default function BookingsClient({ locale }: { locale: string }) {
         );
         setBookings(
           rows.map((b) => ({
-            ...b,
+            ...withExpiry(b),
             student: { id: b.student_id, user: byId.get(b.student_id) ?? null },
           }))
         );
@@ -260,7 +272,7 @@ export default function BookingsClient({ locale }: { locale: string }) {
   const cancelled = useMemo(
     () =>
       bookings.filter(
-        (b) => b.status === "cancelled" || b.status === "rejected"
+        (b) => b.status === "cancelled" || b.status === "rejected" || b.status === "expired"
       ),
     [bookings]
   );

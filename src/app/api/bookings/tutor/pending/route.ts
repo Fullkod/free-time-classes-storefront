@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { expirePendingBookings } from "@/lib/bookings/expirePending";
 import {
   nowAsLessonTimestamp,
   nowPlusMinutesAsLessonTimestamp,
@@ -58,6 +59,9 @@ export async function GET() {
     const admin = createSupabaseAdminClient(supabaseUrl, serviceRoleKey, {
       auth: { persistSession: false },
     });
+
+    // F014: expire this user's overdue requests before listing them.
+    await expirePendingBookings(admin, { tutorId: user.id });
 
     const { data: bookings, error: bookingsError } = await admin
       .from("bookings")

@@ -4,10 +4,8 @@ import { insertNotification } from "@/lib/notifications";
 import { releaseLesson } from "@/lib/bookings/releaseLesson";
 import { isValidMeetLink } from "@/lib/bookings/meetLink";
 import { findScheduleConflict } from "@/lib/bookings/scheduleConflict";
-import { nowPlusMinutesAsLessonTimestamp } from "@/lib/datetime/lessonTime";
+import { expirePendingBookings } from "@/lib/bookings/expirePending";
 import type { BookingRejectionReason } from "@/types/booking";
-
-export const CUSTOM_REQUEST_EXPIRY_MINUTES = 15;
 
 export type RespondAction = "confirm" | "reject";
 
@@ -74,6 +72,15 @@ export async function respondToBooking(
 
   if (booking.status !== "pending") return ALREADY_HANDLED;
 
+  // F014: a request past its deadline expires instead of being answered.
+  const expiry = await expirePendingBookings(admin, { bookingId });
+  if (expiry.bookingsExpired > 0) {
+    return {
+      httpStatus: 410,
+      payload: { error: "This request has expired.", code: "request_expired" },
+    };
+  }
+
   const isCustomRequest = booking.lesson_id == null;
 
   if (
@@ -103,19 +110,6 @@ export async function respondToBooking(
     let lessonIdForFlow: number | null = booking.lesson_id ?? null;
 
     if (isCustomRequest) {
-      const expiryCutoff = nowPlusMinutesAsLessonTimestamp(CUSTOM_REQUEST_EXPIRY_MINUTES);
-      if ((booking.requested_scheduled_date_time as string) < expiryCutoff) {
-        await admin
-          .from("bookings")
-          .update({ status: "rejected", updated_at: new Date().toISOString() })
-          .eq("id", bookingId)
-          .eq("status", "pending");
-        return {
-          httpStatus: 410,
-          payload: { error: "This request has expired.", code: "request_expired" },
-        };
-      }
-
       const duration = booking.requested_duration_minutes as number;
       let computedPrice = 0;
       if (booking.course_id) {

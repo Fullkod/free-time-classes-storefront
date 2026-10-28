@@ -49,7 +49,6 @@ import {
 } from "lucide-react";
 import {
   endOfTodayAsLessonTimestamp,
-  nowPlusMinutesAsLessonTimestamp,
   startOfMonthAsLessonTimestamp,
   startOfTodayAsLessonTimestamp,
 } from "@/lib/datetime/lessonTime";
@@ -58,6 +57,7 @@ import {
   lessonTimestampToEpoch,
   useViewerTimeZone,
 } from "@/lib/datetime/viewerTime";
+import { isPendingExpired } from "@/lib/bookings/pendingExpiry";
 
 type PendingBookingItem = {
   booking: Booking;
@@ -66,8 +66,6 @@ type PendingBookingItem = {
   customSubjectName?: string | null;
   studentName?: string | null;
 };
-
-const CUSTOM_REQUEST_EXPIRY_MINUTES = 15;
 
 function isCustomRequestItem(item: PendingBookingItem): boolean {
   return item.booking.lesson_id == null;
@@ -198,14 +196,13 @@ export default function TutorDashboardClient({
     setLoading(true);
     try {
       const bookings = await getBookingsByTutor(effectiveUser.id);
-      const expiryCutoff = nowPlusMinutesAsLessonTimestamp(CUSTOM_REQUEST_EXPIRY_MINUTES);
       const pendingBookings = bookings.filter((b) => {
         if (b.status !== "pending") return false;
         if (typeof b.lesson_id === "number") return true;
-        // Custom request: keep only if not expired and well-formed.
+        // Custom request: keep only if not expired (F014) and well-formed.
         return (
           typeof b.requested_scheduled_date_time === "string" &&
-          b.requested_scheduled_date_time >= expiryCutoff &&
+          !isPendingExpired({ created_at: b.created_at, start: b.requested_scheduled_date_time }) &&
           typeof b.requested_subject_id === "number"
         );
       });
@@ -267,7 +264,17 @@ export default function TutorDashboardClient({
           } satisfies PendingBookingItem;
         });
 
-      setPendingItems(items);
+      // F014: slot requests past their deadline are hidden (the API expires them).
+      setPendingItems(
+        items.filter(
+          (item) =>
+            !item.lesson ||
+            !isPendingExpired({
+              created_at: item.booking.created_at,
+              start: item.lesson.scheduled_date_time ?? null,
+            })
+        )
+      );
     } catch (e) {
       console.error("Error loading pending bookings:", e);
       toast.error(t("loadingError"));
