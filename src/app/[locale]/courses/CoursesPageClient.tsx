@@ -24,6 +24,15 @@ import { useEffect, useMemo, useState } from "react";
 type CourseLevel = NonNullable<CourseFilters["level"]>;
 type CourseSort = NonNullable<CourseFilters["sort"]>;
 
+const COURSE_LEVELS: readonly CourseLevel[] = ["beginner", "intermediate", "advanced"];
+const COURSE_SORTS: readonly CourseSort[] = [
+  "created_desc",
+  "price_asc",
+  "price_desc",
+  "duration_asc",
+  "duration_desc",
+];
+
 interface CoursesPageClientProps {
   initialSubjects: Subject[];
   initialCourses: CourseWithRelations[];
@@ -67,14 +76,58 @@ export default function CoursesPageClient({
     highRatingOnly: false,
   });
 
-  // ?subject=<id> from the home categories. Read on the client so the page
-  // stays static.
+  const [tutorSearch, setTutorSearch] = useState("");
+
+  // Filters live in the URL (?q, subject, level, ...) so a reload or a shared
+  // link keeps them. Read and written on the client so the page stays static.
+  const [urlReady, setUrlReady] = useState(false);
   useEffect(() => {
-    const subject = new URLSearchParams(window.location.search).get("subject");
-    if (subject && subjects.some((s) => String(s.id) === subject)) {
-      setQueryFilters((p) => ({ ...p, subject_id: subject }));
-    }
+    const params = new URLSearchParams(window.location.search);
+    const get = (key: string) => params.get(key) ?? "";
+    const numeric = (key: string) => (/^\d+(\.\d+)?$/.test(get(key)) ? get(key) : "");
+    const subject = get("subject");
+    const level = get("level");
+    const sort = get("sort");
+    setQueryFilters((p) => ({
+      ...p,
+      search: get("q").slice(0, 80),
+      subject_id: subjects.some((s) => String(s.id) === subject) ? subject : "",
+      level: (COURSE_LEVELS as readonly string[]).includes(level) ? (level as CourseLevel) : "",
+      minPrice: numeric("minPrice"),
+      maxPrice: numeric("maxPrice"),
+      minDuration: numeric("minDuration"),
+      maxDuration: numeric("maxDuration"),
+      sort: (COURSE_SORTS as readonly string[]).includes(sort) ? (sort as CourseSort) : "created_desc",
+      priceFreeOnly: get("free") === "1",
+      highRatingOnly: get("top") === "1",
+    }));
+    setTutorSearch(get("tutor").slice(0, 80));
+    setUrlReady(true);
   }, [subjects]);
+
+  useEffect(() => {
+    if (!urlReady) return;
+    const params = new URLSearchParams();
+    const set = (key: string, value: string) => {
+      if (value.trim()) params.set(key, value.trim());
+    };
+    set("q", queryFilters.search);
+    set("subject", queryFilters.subject_id);
+    set("level", queryFilters.level);
+    set("minPrice", queryFilters.minPrice);
+    set("maxPrice", queryFilters.maxPrice);
+    set("minDuration", queryFilters.minDuration);
+    set("maxDuration", queryFilters.maxDuration);
+    if (queryFilters.sort !== "created_desc") params.set("sort", queryFilters.sort);
+    if (queryFilters.priceFreeOnly) params.set("free", "1");
+    if (queryFilters.highRatingOnly) params.set("top", "1");
+    set("tutor", tutorSearch);
+    const query = params.toString();
+    const url = `${window.location.pathname}${query ? `?${query}` : ""}`;
+    if (url !== `${window.location.pathname}${window.location.search}`) {
+      window.history.replaceState(window.history.state, "", url);
+    }
+  }, [urlReady, queryFilters, tutorSearch]);
 
   const [debouncedQueryFilters, setDebouncedQueryFilters] =
     useState(queryFilters);
@@ -86,7 +139,6 @@ export default function CoursesPageClient({
     return () => window.clearTimeout(t);
   }, [queryFilters]);
 
-  const [tutorSearch, setTutorSearch] = useState("");
   const [debouncedTutorSearch, setDebouncedTutorSearch] = useState("");
   useEffect(() => {
     const t = window.setTimeout(
@@ -136,6 +188,9 @@ export default function CoursesPageClient({
         }
         if (debouncedQueryFilters.search.trim()) {
           courseFilters.search = debouncedQueryFilters.search.trim();
+        }
+        if (debouncedTutorSearch.trim()) {
+          courseFilters.tutor_name = debouncedTutorSearch.trim();
         }
         if (debouncedQueryFilters.priceFreeOnly) {
           courseFilters.min_price_per_session = 0;
@@ -202,13 +257,8 @@ export default function CoursesPageClient({
     void loadCourses();
   }, [debouncedQueryFilters, debouncedTutorSearch, initialCourses]);
 
-  const displayedCourses = useMemo(() => {
-    const needle = debouncedTutorSearch.trim().toLowerCase();
-    if (!needle) return courses;
-    return courses.filter((course) =>
-      (course.tutor?.username ?? "").toLowerCase().includes(needle)
-    );
-  }, [courses, debouncedTutorSearch]);
+  // Tutor name is filtered on the server, over the whole catalog.
+  const displayedCourses = courses;
 
   const levelLabel = (level: CourseWithRelations["level"] | null | undefined) => {
     if (level === "advanced") return tCat("levelAdvanced");

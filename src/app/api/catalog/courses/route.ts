@@ -45,6 +45,10 @@ function sanitizeFilters(raw: Record<string, unknown>): CourseFilters {
     const search = raw.search.replace(/[,()%*\\]/g, " ").trim().slice(0, 80);
     if (search) filters.search = search;
   }
+  if (typeof raw.tutor_name === "string") {
+    const tutorName = raw.tutor_name.replace(/[,()%*_\\]/g, " ").trim().slice(0, 80);
+    if (tutorName) filters.tutor_name = tutorName;
+  }
   filters.min_price_per_session = finiteNumber(raw.min_price_per_session);
   filters.max_price_per_session = finiteNumber(raw.max_price_per_session);
   filters.min_duration_minutes = finiteNumber(raw.min_duration_minutes);

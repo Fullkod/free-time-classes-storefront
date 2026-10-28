@@ -25,6 +25,8 @@ export interface CourseFilters {
   level?: "beginner" | "intermediate" | "advanced";
   is_active?: boolean;
   search?: string; // Search in title or description
+  /** Part of the tutor's username (case-insensitive). */
+  tutor_name?: string;
 
   // Numeric range filters
   min_price_per_session?: number;
@@ -92,6 +94,20 @@ export async function getCoursesWithRelations(
 
   if (filters?.level) {
     query = query.eq("level", filters.level);
+  }
+
+  const tutorName = sanitizeSearch(filters?.tutor_name);
+  if (tutorName) {
+    const { data: tutors, error: tutorsError } = await client
+      .from("users")
+      .select("id")
+      .eq("is_tutor", true)
+      .ilike("username", `%${tutorName}%`)
+      .limit(200);
+    if (tutorsError) throw tutorsError;
+    const tutorIds = (tutors ?? []).map((t) => t.id as string);
+    if (tutorIds.length === 0) return [];
+    query = query.in("tutor_id", tutorIds);
   }
 
   if (filters?.is_active !== undefined) {
