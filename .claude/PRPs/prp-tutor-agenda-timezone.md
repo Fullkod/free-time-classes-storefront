@@ -1,6 +1,6 @@
 # PRP-002: Agenda del tutor en su zona horaria
 
-> **Estado**: EN CURSO — fases 1-4 hechas (2026-10-28); faltan 4b y 5
+> **Estado**: EN CURSO — fases 1-4b hechas (2026-10-28); falta la 5
 > **Fecha**: 2026-10-28
 > **Proyecto**: Free Time Classes
 > **Origen**: FRE0007, decision 11 (2026-10-28): «agenda del tutor en SU zona horaria ya (`tutor_profiles.timezone`, con migracion)». Continua PRP-001 (`.claude/PRPs/prp-course-booking-unit.md`) y las decisiones F047/F051 (2026-10-20).
@@ -141,7 +141,7 @@ create trigger tutor_profiles_validate_timezone
 - [x] Fase 2 — `200da8d` (motor por instantes; 300 agendas aleatorias identicas al motor anterior en Madrid; casos La Habana/Mexico/DST/medianoche OK con TZ=UTC; 8 semanas densas en ~114 ms)
 - [x] Fase 3 — `ec9fa5e` (PATCH zona, excepciones y calendario API en zona del tutor)
 - [x] Fase 4 — `737cb7b` (UI; E2E con el tutor de prueba y navegador en America/Havana: cambio de zona por UI, zona invalida 400, extra pasado 400, extra 10-12 Havana → open-times 15:00/15:30/16:00 Madrid, indicador «ahora» correcto; datos QA borrados y zona restaurada a Madrid)
-- [ ] Fase 4b — avisos al tutor en su zona (`src/lib/whatsapp/messages.ts` formatea en Madrid; los textos de `insertNotification` para el tutor: `booking_request`, `booking_custom_request`, `booking_cancelled` al tutor)
+- [x] Fase 4b — WhatsApp al tutor (`booking_request`, `booking_custom_request`, `booking_cancelled`) con la hora en su zona y etiqueta «(hora de Havana)»; la cancelacion al tutor ahora lleva la hora. Las notificaciones in-app no muestran hora en su texto: nada que cambiar. Simulado sin enviar (Havana 09:00 = Madrid 15:00 el 3/11)
 - [ ] Fase 5 — validacion final (build, E2E estudiante en Madrid/Mexico reservando a tutor en La Habana, docs). `TutorCoursesManager` no tiene paso de agenda propio (solo una pista tras publicar): no necesita campo de zona.
 
 ### Fase 1: Base de datos (migracion 046)

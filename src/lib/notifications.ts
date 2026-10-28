@@ -3,6 +3,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { NotificationType } from "@/types/notification";
 import { isOpenWaConfigured, phoneToChatId, sendText } from "@/lib/whatsapp/openwa";
 import { buildWhatsAppMessage } from "@/lib/whatsapp/messages";
+import { loadTutorTimeZone } from "@/lib/availability/tutorTimeZone";
+
+/** Notifications addressed to the tutor: their times go in the tutor's zone (PRP-002). */
+const TUTOR_RECIPIENT_TYPES: ReadonlySet<NotificationType> = new Set([
+  "booking_request",
+  "booking_custom_request",
+  "booking_cancelled",
+]);
 
 /**
  * Insert a notification using a Supabase admin client (service role).
@@ -93,6 +101,9 @@ async function sendWhatsAppNotification(
       title: params.title,
       body: params.body,
       data: params.data,
+      timeZone: TUTOR_RECIPIENT_TYPES.has(params.type)
+        ? await loadTutorTimeZone(admin, params.userId)
+        : undefined,
     });
 
     const result = await sendText(chatId, text);

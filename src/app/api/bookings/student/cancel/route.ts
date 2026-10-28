@@ -132,12 +132,15 @@ export async function POST(request: NextRequest) {
       return noStoreJson({ error: "This booking cannot be cancelled." }, { status: 409 });
     }
 
+    let cancelledStart: string | null = booking.requested_scheduled_date_time ?? null;
     if (booking.lesson_id) {
       const { data: lessonToCancel } = await admin
         .from("lessons")
-        .select("tutor_id,google_event_id")
+        .select("tutor_id,google_event_id,scheduled_date_time")
         .eq("id", booking.lesson_id)
         .single();
+
+      cancelledStart ??= lessonToCancel?.scheduled_date_time ?? null;
 
       if (lessonToCancel?.google_event_id && lessonToCancel.tutor_id) {
         try {
@@ -164,7 +167,11 @@ export async function POST(request: NextRequest) {
       type: "booking_cancelled",
       title: "Clase cancelada",
       body: `${studentUser?.username ?? "Un estudiante"} ha cancelado su solicitud de clase.`,
-      data: { booking_id: bookingId, lesson_id: booking.lesson_id },
+      data: {
+        booking_id: bookingId,
+        lesson_id: booking.lesson_id,
+        ...(cancelledStart ? { scheduled_date_time: cancelledStart } : {}),
+      },
     });
 
     return noStoreJson({ ok: true }, { status: 200 });
