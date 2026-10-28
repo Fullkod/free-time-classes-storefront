@@ -44,4 +44,10 @@ en Madrid); EUR para todo. Recogidas tambien en BUSINESS_LOGIC.md §5.
 **Decisiones del PRP-001 (2026-10-20):** inicio cada 30 min, sin margen, 8 semanas; duraciones 30/45/60/90/120;
 sin cursos gratuitos; la solicitud de otra hora va ligada a un curso; curso con historial se archiva; las horas libres
 son publicas. La agenda del tutor sigue en hora de Madrid (mostrarla en su zona es decision pendiente).
-Las decisiones de producto que siguen pendientes estan listadas en FRE0007: preguntar, no inventar.
+**Decisiones tomadas (2026-10-28), cierran las 11 pendientes de FRE0007:** pendiente caduca a las 48 h o 2 h antes
+de la clase (F014); resenas solo de clases completed, una por clase, 30 dias (F036); «Solo con reserva» se implementa
+(F081); WhatsApp opt-in con fecha de consentimiento (F097); estudiante -> tutor libre e inmediato (F043); materias:
+tutores crean, quitar solo desvincula, borrado global solo admin (F056); onboarding tutor = tarjeta checklist de 3
+pasos (G-signup-6); «Explorar» -> /courses (F096); Supabase sigue gratis + keepalive en Vercel Cron (G-prod-1);
+funciones Vercel a pdx1 (G-prod-4); agenda del tutor en SU zona horaria ya (`tutor_profiles.timezone`, con migracion).
+Decisiones nuevas que surjan: preguntar, no inventar.
