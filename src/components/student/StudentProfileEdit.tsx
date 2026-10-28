@@ -60,8 +60,8 @@ const FT_LABEL = "text-[13px] font-medium text-ft-ink-2";
 function getTimezones(): string[] {
   try {
     // Available in modern browsers
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const supported = (Intl as any)?.supportedValuesOf?.("timeZone");
+    const supported =
+      typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [];
     if (Array.isArray(supported) && supported.length > 0) return supported;
   } catch {
     // ignore

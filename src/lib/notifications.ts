@@ -37,8 +37,6 @@ export async function insertNotification(
     data: params.data ?? {},
   };
 
-  console.log("[insertNotification] inserting:", JSON.stringify(row));
-
   const { data, error } = await admin
     .from("notifications")
     .insert(row)
@@ -49,8 +47,6 @@ export async function insertNotification(
     console.error("[insertNotification] FAILED:", error.code, error.message, error.details);
     return;
   }
-
-  console.log("[insertNotification] OK, id:", data?.id);
 
   // Best-effort WhatsApp mirror. Never let a WhatsApp failure break the
   // in-app notification or the calling API route: run it after the
