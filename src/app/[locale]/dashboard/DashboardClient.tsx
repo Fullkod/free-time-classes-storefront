@@ -103,8 +103,12 @@ function resolveAvatar(pic: string | null | undefined): string | null {
   return getPublicUrl("avatars", pic);
 }
 
-function getGreetingKey(): "greetingMorning" | "greetingAfternoon" | "greetingEvening" {
-  const hour = new Date().getHours();
+// Hour in the viewer's zone (Madrid during server render and hydration, so the
+// greeting matches the server markup; see useViewerTimeZone).
+function getGreetingKey(timeZone: string): "greetingMorning" | "greetingAfternoon" | "greetingEvening" {
+  const hour = Number(
+    new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone }).format(new Date())
+  );
   if (hour < 12) return "greetingMorning";
   if (hour < 19) return "greetingAfternoon";
   return "greetingEvening";
@@ -135,7 +139,7 @@ export default function DashboardClient({
 
   const next = upcomingLessons[0] ?? null;
 
-  const greeting = t(getGreetingKey());
+  const greeting = t(getGreetingKey(timeZone));
   const userAvatarUrl = resolveAvatar(user.profile_picture ?? null);
   const nextAvatarUrl = next ? resolveAvatar(next.tutorPicture) : null;
 
