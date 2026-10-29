@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { FreetimeBottomNav } from "./FreetimeBottomNav";
 import { FreetimeFooter } from "./FreetimeFooter";
 import { FreetimeNavbar } from "./FreetimeNavbar";
+import { FullkodCredit } from "./FullkodCredit";
 
 interface FreetimeShellProps {
   children: ReactNode;
@@ -37,11 +38,22 @@ export function FreetimeShell({ children }: FreetimeShellProps) {
 
       <main
         className={cn(
-          "flex flex-1 flex-col",
+          "relative flex flex-1 flex-col",
           showBottomNav && "pb-[calc(env(safe-area-inset-bottom)+72px)] md:pb-0"
         )}
       >
         {children}
+        {isAuthRoute ? (
+          // Full-screen auth pages: pinned to the bottom, no extra height
+          <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-6">
+            <FullkodCredit className="pointer-events-auto" />
+          </div>
+        ) : (
+          // Mobile: the desktop footer is hidden, the credit closes the content
+          <div className="flex justify-center px-6 pb-6 pt-8 md:hidden">
+            <FullkodCredit />
+          </div>
+        )}
       </main>
 
       {!isAuthRoute && <FreetimeFooter />}

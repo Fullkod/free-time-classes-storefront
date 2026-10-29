@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { BrandLogo } from "./BrandLogo";
+import { FullkodCredit } from "./FullkodCredit";
 
 export function FreetimeFooter() {
   const t = useTranslations("home");
@@ -72,9 +73,12 @@ export function FreetimeFooter() {
         </div>
 
         <div className="mt-10 flex items-center justify-between border-t border-ft-line-soft pt-6">
-          <p className="text-[12px] text-ft-ink-3">
-            © {year} Free Time Classes. {t("allRightsReserved")}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <p className="text-[12px] text-ft-ink-3">
+              © {year} Free Time Classes. {t("allRightsReserved")}
+            </p>
+            <FullkodCredit />
+          </div>
           <p className="font-instrument-serif text-[14px] italic text-ft-ink-3">
             {t("footerTagline")}
           </p>
